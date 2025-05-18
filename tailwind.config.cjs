@@ -4,9 +4,16 @@ module.exports = {
     "./resources/**/*.blade.php",
     "./resources/**/*.js",
     "./resources/**/*.vue",
+    "./app/View/Components/**/*.php",
+    "./app/Livewire/**/*.php",
   ],
   theme: {
     extend: {},
   },
-  plugins: [],
-}
+  plugins: [
+    require("daisyui")
+  ],
+  daisyui: {
+    themes: ["light", "dark"],
+  },
+} 
