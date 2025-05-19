@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PembeliResource\Pages;
-use App\Filament\Resources\PembeliResource\RelationManagers;
-use App\Models\Pembeli;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Pembeli;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Card;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\PembeliResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\PembeliResource\RelationManagers;
 
 class PembeliResource extends Resource
 {
@@ -32,18 +33,21 @@ class PembeliResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('username')
-                    ->label('Username')
-                    ->placeholder('Username')
-                    ->unique(ignorable: fn ($record) => $record)
-                    ->required(),
+                Card::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('username')
+                            ->label('Username')
+                            ->placeholder('Username')
+                            ->unique(ignorable: fn ($record) => $record)
+                            ->required(),
 
-                Forms\Components\TextInput::make('password')
-                    ->label('Password')
-                    ->placeholder('Password')
-                    ->dehydrateStateUsing(fn ($state) => $state ? bcrypt($state) : null)
-                    ->dehydrated(fn ($state) => filled($state)) // hanya mengubah password jika field diisi
-                    ->password(),
+                        Forms\Components\TextInput::make('password')
+                            ->label('Password')
+                            ->placeholder('Password')
+                            ->dehydrateStateUsing(fn ($state) => $state ? bcrypt($state) : null)
+                            ->dehydrated(fn ($state) => filled($state)) // hanya mengubah password jika field diisi
+                            ->password(),
+                    ])
             ]);
     }
     
