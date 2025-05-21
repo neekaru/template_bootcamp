@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('kategori_produk')->nullable();
             $table->text('ulasan_produk')->nullable();
             $table->string('foto')->nullable(); // Bisa simpan path gambar
+            $table->integer('harga')->nullable();
             $table->timestamps();
         });
     }
