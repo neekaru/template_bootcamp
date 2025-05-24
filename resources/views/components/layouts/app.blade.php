@@ -6,7 +6,13 @@
     <title>{{ $title ?? 'Kerajinan Tangan' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-base-200 bg-grid-pattern">
-    {{ $slot }}
+<body class="flex flex-col min-h-screen bg-base-200 bg-grid-pattern">
+    @livewire('header')
+
+    <main class="flex-grow">
+        {{ $slot }}
+    </main>
+
+    @livewire('footer')
 </body>
-</html> 
+</html>
