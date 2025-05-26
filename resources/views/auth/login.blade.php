@@ -26,6 +26,9 @@
                         <button type="submit" class="btn btn-primary">Login</button>
                     </div>
                 </form>
+                <div class="text-center mt-4">
+                    <a href="{{ route('register') }}" class="text-sm link link-hover">Don't have an account? Register</a>
+                </div>
             </div>
         </div>
     </div>
