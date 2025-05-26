@@ -8,33 +8,28 @@ use Livewire\Component;
 #[Layout('components.layouts.app')]
 class Carousel extends Component
 {
-    public $title = 'Agricultural Innovation'; // For the browser tab title
-    public $mainHeading = 'Driving transformation with innovation';
+    public $title = 'Hero Banner'; // For the browser tab title
+    public $mainHeading = 'Welcome to Our Store'; // Updated heading
 
     public $sections = [
         [
-            'tab_title' => 'Crop Assure',
-            'description' => 'End-to-end Crop Management & Decision Support Solution assisting farmers with actionable farm-specific advisories backed with hyperspectral imaging.',
-            'preview_image' => 'https://picsum.photos/seed/dronefield/400/300'
+            'tab_title' => 'Handcrafted Goods',
+            'description' => 'Discover unique, handcrafted items made with passion and skill. Perfect for gifts or adding a special touch to your home.',
+            'preview_image' => 'https://picsum.photos/seed/crafts1/800/600' // Example image
         ],
         [
-            'tab_title' => 'Seed Assure',
-            'description' => 'Advanced seed analysis and quality assurance ensuring optimal crop yield and resilience. Leveraging cutting-edge technology for seed viability and genetic purity assessment.',
-            'preview_image' => 'https://picsum.photos/seed/grainstorage/400/300'
+            'tab_title' => 'Artisan Products',
+            'description' => 'Explore a wide range of artisan products, from pottery to textiles, each telling a unique story.',
+            'preview_image' => 'https://picsum.photos/seed/crafts2/800/600' // Example image
         ],
         [
-            'tab_title' => 'Source Assure',
-            'description' => 'Comprehensive supply chain traceability and sustainability verification, empowering consumers and businesses with transparent and ethical sourcing information.',
-            'preview_image' => 'https://picsum.photos/seed/farmteam/400/300'
+            'tab_title' => 'Support Local Crafters',
+            'description' => 'By shopping with us, you support local artisans and help preserve traditional crafting techniques.',
+            'preview_image' => 'https://picsum.photos/seed/crafts3/800/600' // Example image
         ],
     ];
 
-    public $activeIndex = 1; // Default to "Seed Assure"
-
-    public function selectSection($index)
-    {
-        $this->activeIndex = $index;
-    }
+    // activeIndex and selectSection are no longer needed here as Alpine.js handles it.
 
     public function render()
     {

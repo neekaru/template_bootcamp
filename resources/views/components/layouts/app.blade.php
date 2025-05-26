@@ -8,8 +8,9 @@
 </head>
 <body class="flex flex-col min-h-screen bg-base-200 bg-grid-pattern">
     @livewire('header')
+    @livewire('mobile-bottom-navigation')
 
-    <main class="flex-grow">
+    <main class="flex-grow pb-16 sm:pb-0">
         {{ $slot }}
     </main>
 
