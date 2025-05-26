@@ -24,7 +24,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="flex flex-col min-h-screen bg-base-200 bg-grid-pattern">
-    @livewire('header')
+    <div x-show="theme === 'light'">
+        @livewire('header')
+    </div>
+    <div x-show="theme === 'dark'">
+        @livewire('header-dark')
+    </div>
     <div class="fixed top-4 right-4 z-50">
         <button @click="toggleTheme()" class="btn btn-circle btn-ghost">
             <span x-show="theme === 'light'">
