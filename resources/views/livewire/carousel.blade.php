@@ -108,8 +108,6 @@
 x-init="init()"
 {{-- MODIFIED CLASS ATTRIBUTE: Added mt-8 for top margin --}}
 class="relative w-[90%] sm:w-full max-w-5xl mx-auto overflow-hidden rounded-lg shadow-xl mt-8"
-@mouseenter="stopAutoplay"
-@mouseleave="startAutoplay"
 >
 <!-- Carousel items -->
 <div class="h-64 sm:h-96 flex"
