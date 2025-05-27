@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\TransactionResource\Pages;
+namespace App\Filament\Admin\Resources\TransactionResource\Pages;
 
 use App\Filament\Admin\Resources\TransactionResource;
 use Filament\Resources\Pages\ViewRecord;
@@ -18,7 +18,7 @@ class ViewTransaction extends ViewRecord
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
-            ->schema([                
+            ->schema([
 
                 // General Information
                 Card::make([
