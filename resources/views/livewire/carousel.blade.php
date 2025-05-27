@@ -7,6 +7,9 @@
     transitionEnabled: true,
     numOriginalSlides: 0,
     isSnapping: false, // Flag to indicate a snap (teleport) is in progress
+    isVisible: true, // Track if page/component is visible
+    intersectionObserver: null, // For viewport visibility
+    visibilityHandler: null, // Store visibility change handler
 
     init() {
         this.numOriginalSlides = this.originalSections.length;
@@ -29,24 +32,72 @@
             this.activeIndex = 1; // Start on the first actual slide
         }
 
+        // Setup visibility tracking
+        this.setupVisibilityTracking();
+
         if (this.autoplay && this.numOriginalSlides > 1) {
             this.startAutoplay();
         }
     },
 
+    setupVisibilityTracking() {
+        // Page Visibility API - pause when tab is not active
+        this.visibilityHandler = () => {
+            this.isVisible = !document.hidden;
+            if (this.isVisible) {
+                if (this.autoplay && this.numOriginalSlides > 1) {
+                    this.startAutoplay();
+                }
+            } else {
+                this.stopAutoplay();
+            }
+        };
+        document.addEventListener('visibilitychange', this.visibilityHandler);
+
+        // Intersection Observer - pause when carousel is not in viewport
+        if ('IntersectionObserver' in window) {
+            this.intersectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && this.isVisible) {
+                        if (this.autoplay && this.numOriginalSlides > 1) {
+                            this.startAutoplay();
+                        }
+                    } else {
+                        this.stopAutoplay();
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            this.intersectionObserver.observe(this.$el);
+        }
+    },
+
+    destroy() {
+        // Cleanup when component is destroyed
+        this.stopAutoplay();
+        if (this.visibilityHandler) {
+            document.removeEventListener('visibilitychange', this.visibilityHandler);
+        }
+        if (this.intersectionObserver) {
+            this.intersectionObserver.disconnect();
+        }
+    },
+
     startAutoplay() {
-        if (!this.autoplay || this.numOriginalSlides <= 1) return;
+        if (!this.autoplay || this.numOriginalSlides <= 1 || !this.isVisible) return;
         clearInterval(this.interval); // Clear existing interval
         this.interval = setInterval(() => {
-            if (!this.isSnapping) { // Don't advance if a snap is in progress
+            if (!this.isSnapping && this.isVisible && !document.hidden) { // Don't advance if a snap is in progress or page is hidden
                 this.next();
             }
         }, 3000); // Change slide every 3 seconds
     },
 
     stopAutoplay() {
-        clearInterval(this.interval);
-        this.interval = null;
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
     },
 
     next() {
@@ -106,16 +157,19 @@
     }
 }"
 x-init="init()"
-{{-- MODIFIED CLASS ATTRIBUTE: Added mt-8 for top margin --}}
-class="relative w-[90%] sm:w-full max-w-5xl mx-auto overflow-hidden rounded-lg shadow-xl mt-8"
+x-on:destroy="destroy()"
+{{-- MODIFIED CLASS ATTRIBUTE: Added mt-8 for top margin and improved overflow handling --}}
+class="relative w-[90%] sm:w-full max-w-5xl mx-auto overflow-hidden rounded-lg shadow-xl mt-8 contain-layout"
+style="contain: layout style; backface-visibility: hidden;"
 >
 <!-- Carousel items -->
 <div class="h-64 sm:h-96 flex"
      :style="`transform: translateX(-${activeIndex * 100}%); will-change: transform;`"
      :class="{ 'transition-transform duration-700 ease-in-out': transitionEnabled }"
+     style="backface-visibility: hidden; transform-style: preserve-3d;"
      @transitionend="handleTransitionEnd()">
     <template x-for="(section, idx) in slidesToDisplay" :key="section._cloneId || idx">
-        <div class="w-full h-full flex-shrink-0 relative bg-cover bg-center"
+        <div class="w-full h-full flex-shrink-0 relative bg-cover bg-center carousel-slide"
              :style="`background-image: url('${section.preview_image}')`">
             <div class="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center text-white p-4 sm:p-8 text-center">
                 <h2 class="text-xl sm:text-3xl font-bold mb-1 sm:mb-2" x-text="section.tab_title"></h2>

@@ -9,6 +9,23 @@
     background-size: 20px 20px;
 }
 
+/* Carousel optimizations */
+.contain-layout {
+    contain: layout style;
+}
+
+/* Hardware acceleration for smooth animations */
+.carousel-container {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+.carousel-slide {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
 /* Custom font configuration */
 @layer base {
     html {
