@@ -20,7 +20,7 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::guard('pembeli')->attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended('dashboard'); // Or wherever you want to redirect after login
         }
@@ -32,7 +32,7 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('pembeli')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/');

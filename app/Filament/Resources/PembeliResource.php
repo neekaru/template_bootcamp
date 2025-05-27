@@ -41,6 +41,12 @@ class PembeliResource extends Resource
                             ->unique(ignorable: fn ($record) => $record)
                             ->required(),
 
+                        Forms\Components\TextInput::make('email')
+                            ->label('Email')
+                            ->placeholder('Email')
+                            ->unique(ignorable: fn ($record) => $record)
+                            ->required(),
+
                         Forms\Components\TextInput::make('password')
                             ->label('Password')
                             ->placeholder('Password')
@@ -56,7 +62,7 @@ class PembeliResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('username'),
-                Tables\Columns\TextColumn::make('password'),
+                Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime(),
             ])
             ->filters([

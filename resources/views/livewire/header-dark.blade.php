@@ -27,18 +27,13 @@
                             </svg>
                         </button>
 
-                        @guest
+                        @if(!$isAuthenticated)
                             <a wire:navigate href="{{ route('login') }}" class="px-5 py-2 text-sm bg-neutral-600 hover:bg-neutral-500 text-white font-semibold rounded-md shadow-sm transition duration-150 ease-in-out border border-neutral-600">
                                 Log In
                             </a>
                         @else
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="px-5 py-2 text-sm bg-red-700 hover:bg-red-600 text-white font-semibold rounded-md shadow-sm transition duration-150 ease-in-out">
-                                    Logout
-                                </button>
-                            </form>
-                        @endguest
+                            @livewire('auth.logout')
+                        @endif
                     </div>
                 </nav>
             </div>

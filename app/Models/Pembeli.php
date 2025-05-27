@@ -3,11 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Pembeli extends Model
+class Pembeli extends Authenticatable
 {
+    use Notifiable;
+    
     protected $table = 'pembelis';
-    protected $fillable = ['username', 'password'];
+    protected $fillable = ['username', 'email', 'password'];
+    protected $hidden = ['password', 'remember_token'];
 
     public function getAuthPassword()
     {
@@ -16,13 +21,11 @@ class Pembeli extends Model
 
     public function getAuthIdentifierName()
     {
-        return 'username';
+        return 'id';
     }
 
     public function getAuthIdentifier()
     {
-        return $this->username;
+        return $this->getKey();
     }
-    
-    
 }

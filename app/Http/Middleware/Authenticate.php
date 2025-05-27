@@ -12,6 +12,15 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        return $request->expectsJson() ? null : route('login');
+        if ($request->expectsJson()) {
+            return null;
+        }
+        
+        // Check if the requested guard is 'pembeli'
+        if ($request->routeIs('pembeli.*') || in_array('pembeli', $request->route()->middleware())) {
+            return route('login');
+        }
+
+        return route('login');
     }
 }
