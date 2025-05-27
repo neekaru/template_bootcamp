@@ -12,10 +12,10 @@
 
                     <!-- Navigation Links -->
                     <ul class="flex space-x-5 lg:space-x-7 items-center text-sm font-medium text-gray-200">
-                        <li><a href="{{ url('/') }}" class="px-2 py-1 hover:text-sky-300 transition duration-150">Home</a></li>
-                        <li><a href="#" class="px-2 py-1 hover:text-sky-300 transition duration-150">Kategori</a></li>
-                        <li><a href="#" class="px-2 py-1 hover:text-sky-300 transition duration-150">Keranjang</a></li>
-                        <li><a href="#" class="px-2 py-1 hover:text-sky-300 transition duration-150">Tentang kami</a></li>
+                        <li><a href="{{ url('/') }}" wire:navigate class="px-2 py-1 hover:text-sky-300 transition duration-150">Home</a></li>
+                        <li><a href="#" wire:navigate class="px-2 py-1 hover:text-sky-300 transition duration-150">Kategori</a></li>
+                        <li><a href="#" wire:navigate class="px-2 py-1 hover:text-sky-300 transition duration-150">Keranjang</a></li>
+                        <li><a href="#" wire:navigate class="px-2 py-1 hover:text-sky-300 transition duration-150">Tentang kami</a></li>
                     </ul>
 
                     <!-- Search and Auth -->
@@ -28,7 +28,7 @@
                         </button>
 
                         @guest
-                            <a href="{{ route('login') }}" class="px-5 py-2 text-sm bg-neutral-600 hover:bg-neutral-500 text-white font-semibold rounded-md shadow-sm transition duration-150 ease-in-out border border-neutral-600">
+                            <a wire:navigate href="{{ route('login') }}" class="px-5 py-2 text-sm bg-neutral-600 hover:bg-neutral-500 text-white font-semibold rounded-md shadow-sm transition duration-150 ease-in-out border border-neutral-600">
                                 Log In
                             </a>
                         @else
