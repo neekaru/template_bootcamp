@@ -1,17 +1,16 @@
 @section('title')
-{{ $product->title }} - Eat Your Favorite Foods
-@stop
+{{ $produk->title }} - Kreasi Kita
 
 @section('keywords')
-Food Store, Eat Your Favorite Foods
+Kreasi Kita 
 @stop
 
 @section('description')
-{{ $product->description }}
+{{ $produk->description }}
 @stop
 
 @section('image')
-{{ asset('/storage/' . $product->image) }}
+{{ asset('/storage/' . $produk->image) }}
 @stop
 
 <div class="container" style="margin-bottom: 200px;">
@@ -28,22 +27,22 @@ Food Store, Eat Your Favorite Foods
 
             <div class="card border-0 shadow-sm rounded" style="margin-top: -85px;">
                 <div class="card-body mt-4">
-                    <h5>{{ $product->title }}</h5>
+                    <h5>{{ $produk->title }}</h5>
                     <div class="d-flex justify-content-between mt-3">
                         <div>
-                            <p class="fw-bold text-success">Rp. {{ number_format($product->price) }}</p>
+                            <p class="fw-bold text-success">Rp. {{ number_format($produk->price) }}</p>
                         </div>
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill text-orange mb-1 me-2" viewBox="0 0 16 16">
                                 <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
                             </svg>
-                            <span class="fw-bold">{{ number_format($product->ratings_avg_rating, 1) }} ({{ $product->ratings_count }} Reviews )</span>
+                            <span class="fw-bold">{{ number_format($produk->ratings_avg_rating, 1) }} ({{ $produk->ratings_count }} Reviews )</span>
                         </div>
                     </div>
 
                     <h5 class="mt-3">Description</h5>
                     <p>
-                        {!! $product->description !!}
+                        {!! $produk->description !!}
                     </p>
                 </div>
             </div>
@@ -57,7 +56,7 @@ Food Store, Eat Your Favorite Foods
             </h6>
             <div class="row mt-3">
 
-                @foreach($product->ratings()->latest()->get() as $rating)
+                @foreach($produk->ratings()->latest()->get() as $rating)
                 <div class="col-6 mb-4">
                     <div class="card border-0 shadow-sm rounded h-100">
                         <div class="card-body">
@@ -78,9 +77,9 @@ Food Store, Eat Your Favorite Foods
 
                             <!-- Customer Info -->
                             <figure class="d-flex align-items-center m-0 p-0">
-                                <img class="img-fluid rounded-circle m-0 border border-3" width="50" loading="lazy" src="{{ asset('/storage/avatars/' . $rating->customer->image) }}" alt="{{ $rating->customer->name }}">
+                                <img class="img-fluid rounded-circle m-0 border border-3" width="50" loading="lazy" src="{{ asset('/storage/avatars/' . $rating->pembeli->image) }}" alt="{{ $rating->pembeli->name }}">
                                 <figcaption class="ms-2 mt-1">
-                                    <h6 class="mb-1">{{ $rating->customer->name }}</h6>
+                                    <h6 class="mb-1">{{ $rating->pembeli->name }}</h6>
                                 </figcaption>
                             </figure>
                         </div>
@@ -96,14 +95,14 @@ Food Store, Eat Your Favorite Foods
     </div>
 </div>
 
-$product->image
+$produk->image
 
-$product->title
+$produk->title
 
-$product->price
+$produk->price
 
-$product->ratings_avg_rating
+$produk->ratings_avg_rating
 
-$product->ratings_count
+$produk->ratings_count
 
-{!! $product->description !!}
+{!! $produk->description !!}
