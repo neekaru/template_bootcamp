@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Carousel;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Livewire\Web\Produk\Show;
 
 Route::get('/', function () {
     return view('layouts.main'); // This view will just extend the app layout
@@ -22,3 +23,7 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 });
+
+
+//route product show
+Route::get('/produk/{slug}', Web\Produk\Show::class)->name('web.produk.show');
