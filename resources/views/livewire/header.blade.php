@@ -7,21 +7,16 @@
                 <nav class="bg-[#9F6444] shadow-xl rounded-lg p-3 flex items-center justify-between">
                     <!-- Logo -->
                     <a href="/" class="flex items-center space-x-2.5 text-white">
-                        <div class="bg-white p-1.5 rounded-md shadow">
-                            <svg class="h-7 w-auto text-[#A0522D]" viewBox="0 0 28 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 4h3v6.5L12 4h3.5L8.5 12l7 8H12l-5-6.5V20H4V4z"/>
-                                <path d="M21 12l-5-5.5v3.5h-2v4h2v3.5l5-5.5z"/>
-                            </svg>
-                        </div>
+                        <img src="{{ asset('assets/icon/logo-1.png') }}" alt="Kreasi Kita Logo" class="h-10 w-auto">
                         <span class="font-bold text-xl tracking-wide">KREASI KITA</span>
                     </a>
 
                     <!-- Navigation Links -->
                     <ul class="flex space-x-5 lg:space-x-7 items-center text-sm font-medium text-white">
-                        <li><a href="{{ url('/') }}" class="px-2 py-1 hover:text-amber-200 transition duration-150">Home</a></li>
-                        <li><a href="#" class="px-2 py-1 hover:text-amber-200 transition duration-150">Kategori</a></li>
-                        <li><a href="#" class="px-2 py-1 hover:text-amber-200 transition duration-150">Keranjang</a></li>
-                        <li><a href="#" class="px-2 py-1 hover:text-amber-200 transition duration-150">Tentang kami</a></li>
+                        <li><a href="{{ url('/') }}" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Home</a></li>
+                        <li><a href="#" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Kategori</a></li>
+                        <li><a href="#" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Keranjang</a></li>
+                        <li><a href="#" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Tentang kami</a></li>
                     </ul>
 
                     <!-- Search and Auth -->
@@ -34,7 +29,7 @@
                         </button>
 
                         @guest
-                            <a href="{{ route('login') }}" class="px-5 py-2 text-sm bg-gradient-to-r from-[#E5A04B] to-[#BD6711] hover:from-[#D0903F] hover:to-[#A95C0F] text-white font-semibold rounded-md shadow-sm transition duration-150 ease-in-out border border-white/20">
+                            <a wire:navigate href="{{ route('login') }}" class="px-5 py-2 text-sm bg-gradient-to-r from-[#E5A04B] to-[#BD6711] hover:from-[#D0903F] hover:to-[#A95C0F] text-white font-semibold rounded-md shadow-sm transition duration-150 ease-in-out border border-white/20">
                                 Log In
                             </a>
                         @else

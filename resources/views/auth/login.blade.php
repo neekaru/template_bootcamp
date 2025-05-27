@@ -5,10 +5,7 @@
         <div class="card w-96 bg-base-100 shadow-xl bg-opacity-75">
             <div class="card-body items-center text-center">
                 <div class="mb-4">
-                    {{-- Placeholder for K logo --}}
-                    <div class="w-20 h-20 bg-neutral-focus text-neutral-content rounded-lg flex items-center justify-center text-4xl font-bold">
-                        K
-                    </div>
+                    <img src="{{ asset('assets/icon/logo-1.png') }}" alt="Logo" class="w-20 h-20 mx-auto">
                 </div>
                 <form method="POST" action="#" class="w-full">
                     @csrf
@@ -43,7 +40,7 @@
                     </div>
                 </form>
                 <div class="mt-6 w-full max-w-xs mx-auto">
-                     <a href="{{ route('register') }}" class="btn btn-outline w-full rounded-full">REGISTER</a>
+                     <a href="{{ route('register') }}" wire:navigate class="btn btn-outline w-full rounded-full">REGISTER</a>
                 </div>
             </div>
         </div>

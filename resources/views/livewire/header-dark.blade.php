@@ -6,12 +6,7 @@
                 <nav class="bg-neutral-800 shadow-xl rounded-lg p-3 flex items-center justify-between">
                     <!-- Logo -->
                     <a href="/" class="flex items-center space-x-2.5 text-gray-100">
-                        <div class="bg-neutral-700 p-1.5 rounded-md shadow">
-                            <svg class="h-7 w-auto text-neutral-300" viewBox="0 0 28 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 4h3v6.5L12 4h3.5L8.5 12l7 8H12l-5-6.5V20H4V4z"/>
-                                <path d="M21 12l-5-5.5v3.5h-2v4h2v3.5l5-5.5z"/>
-                            </svg>
-                        </div>
+                        <img src="{{ asset('assets/icon/logo-1.png') }}" alt="Kreasi Kita Logo" class="h-10 w-auto">
                         <span class="font-bold text-xl tracking-wide">KREASI KITA</span>
                     </a>
 

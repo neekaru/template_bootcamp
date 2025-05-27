@@ -5,10 +5,7 @@
         <div class="card w-96 bg-base-100 shadow-xl bg-opacity-75">
             <div class="card-body items-center text-center">
                 <div class="mb-4">
-                    {{-- Placeholder for K logo --}}
-                    <div class="w-20 h-20 bg-neutral-focus text-neutral-content rounded-lg flex items-center justify-center text-4xl font-bold">
-                        K
-                    </div>
+                    <img src="{{ asset('assets/icon/logo-1.png') }}" alt="Logo" class="w-20 h-20 mx-auto">
                 </div>
                 <h2 class="card-title justify-center text-2xl font-bold mb-2">REGISTER</h2>
                 <form method="POST" action="#" class="w-full">
@@ -52,7 +49,7 @@
                     </div>
                 </form>
                 <div class="mt-6 w-full max-w-xs mx-auto">
-                     <a href="{{ route('login') }}" class="btn btn-outline w-full rounded-full">Sudah Punya Akun?</a>
+                     <a href="{{ route('login') }}" wire:navigate class="btn btn-outline w-full rounded-full">Sudah Punya Akun?</a>
                 </div>
             </div>
         </div>
