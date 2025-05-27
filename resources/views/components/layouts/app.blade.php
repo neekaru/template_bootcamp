@@ -80,7 +80,11 @@
         @livewire('header-dark')
     </div>
 
-
+    <!-- Theme Manager Component (Mobile Only) -->
+    <div class="sm:hidden">
+        @livewire('theme-manager')
+    </div>
+    
     @livewire('mobile-bottom-navigation')
 
     <main class="flex-grow pb-16 sm:pb-0">
