@@ -36,8 +36,8 @@ class ViewTransaction extends ViewRecord
 
                 // Customer Information
                 Card::make([
-                    TextEntry::make('customer.name')->label('Customer Name'),
-                    TextEntry::make('customer.email')->label('Email Address'),
+                    TextEntry::make('pembeli.username')->label('Customer Name'),
+                    TextEntry::make('pembeli.email')->label('Email Address'),
                     TextEntry::make('address')->label('Address'),
                 ])->columns(3),
 
@@ -53,8 +53,8 @@ class ViewTransaction extends ViewRecord
                     RepeatableEntry::make('TransactionDetails')
                         ->label('Items Details')
                         ->schema([
-                            ImageEntry::make('product.image')->label('Product Image')->circular()->width(100)->height(100),
-                            TextEntry::make('product.title')->label('Product Name'),
+                            ImageEntry::make('produk.foto')->label('Product Image')->circular()->width(100)->height(100),
+                            TextEntry::make('produk.nama_produk')->label('Product Name'),
                             TextEntry::make('qty')->label('Quantity'),
                             TextEntry::make('price')->label('Price')->numeric(decimalPlaces: 0)->money('IDR', locale: 'id'),
                         ])

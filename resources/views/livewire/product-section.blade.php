@@ -13,7 +13,7 @@
                         <h3 class="text-lg font-semibold text-base-content mb-1">Lampu tidur hias</h3>
                         <p class="text-base-content mb-4">Rp.40.000</p>
                         <img src="https://via.placeholder.com/300x300.png?text=Produk+Kerajinan" alt="Lampu tidur hias" class="w-full h-48 object-contain mb-4">
-                        <button class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105">
+                        <button wire:click="addToCart({{ $produk_id ?? null }})" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105">
                             Tambah ke keranjang
                         </button>
                     </div>
