@@ -15,7 +15,7 @@
                     <ul class="flex space-x-5 lg:space-x-7 items-center text-sm font-medium text-white">
                         <li><a href="{{ url('/') }}" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Home</a></li>
                         <li><a href="#" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Kategori</a></li>
-                        <li><a href="#" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Keranjang</a></li>
+                        <li><a href="/cart" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Keranjang</a></li>
                         <li><a href="/about" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Tentang kami</a></li>
                     </ul>
 

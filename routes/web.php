@@ -45,3 +45,6 @@ Route::get('/produk/{slug}', \App\Livewire\Web\Produk\Show::class)->name('web.pr
 
 // About Us page
 Route::get('/about', \App\Livewire\AboutUs::class)->name('about');
+
+// Cart Page
+Route::get('/cart', \App\Livewire\CartPage::class)->name('cart.index');
