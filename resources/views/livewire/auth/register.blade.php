@@ -33,12 +33,12 @@
                     </div>
 
                     <div class="flex justify-center space-x-4 my-4">
-                        <button type="button" class="btn btn-circle btn-outline">
+                        <a href="{{ route('social.login', 'google') }}" class="btn btn-circle btn-outline">
                             <i class="fab fa-google"></i>
-                        </button>
-                        <button type="button" class="btn btn-circle btn-outline">
+                        </a>
+                        <a href="{{ route('social.login', 'facebook') }}" class="btn btn-circle btn-outline">
                             <i class="fab fa-facebook-f"></i>
-                        </button>
+                        </a>
                     </div>
 
                     <div class="form-control mt-6 w-full max-w-xs mx-auto">

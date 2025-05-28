@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Account;
@@ -19,6 +20,10 @@ Route::get('register', Register::class)->name('register')->middleware('guest:pem
 Route::post('login', [LoginController::class, 'login'])->name('login.submit');
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('register', [RegisterController::class, 'register'])->name('register.submit');
+
+// Social Login Routes
+Route::get('auth/{provider}', [SocialiteController::class, 'redirectToProvider'])->name('social.login');
+Route::get('auth/{provider}/callback', [SocialiteController::class, 'handleProviderCallback'])->name('social.callback');
 
 // Protected routes for Pembeli
 Route::middleware(['auth:pembeli'])->prefix('pembeli')->group(function () {
