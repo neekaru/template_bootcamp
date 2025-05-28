@@ -33,3 +33,6 @@ Route::middleware(['auth'])->group(function () {
 
 //route product show
 Route::get('/produk/{slug}', \App\Livewire\Web\Produk\Show::class)->name('web.produk.show');
+
+// About Us page
+Route::get('/about', \App\Livewire\AboutUs::class)->name('about');
