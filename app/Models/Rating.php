@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Rating extends Model
 {
     protected $fillable = [
-        'customer_id',
+        'pembeli_id',
         'produk_id',
-        'transaction_detail_id',
+        'transaction_id',
         'rating',
         'review',
     ];

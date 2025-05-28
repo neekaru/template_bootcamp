@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
+use App\Livewire\Account;
 
 Route::get('/', function () {
     return view('layouts.main'); // This view will just extend the app layout
@@ -24,6 +25,9 @@ Route::middleware(['auth:pembeli'])->prefix('pembeli')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    //route my order
+    Route::get('/my-orders', \App\Livewire\Account\MyOrders\Index::class)->name('account.my-orders.index');
 });
 
 // Protected routes for admin (Filament)
