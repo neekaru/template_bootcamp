@@ -11,21 +11,22 @@ class Carousel extends Component
     public $title = 'Hero Banner'; // For the browser tab title
     public $mainHeading = 'Welcome to Our Store'; // Updated heading
 
+    public $fixed_title = 'Dukung Produk Lokal';
+    public $fixed_subtitle = 'Belanja Sekarang!';
+    public $fixed_description = 'Temukan kualitas terbaik dari tangan kreatif anak bangsa.';
+
     public $sections = [
         [
-            'tab_title' => 'Handcrafted Goods',
-            'description' => 'Discover unique, handcrafted items made with passion and skill. Perfect for gifts or adding a special touch to your home.',
-            'preview_image' => 'https://picsum.photos/seed/crafts1/800/600' // Example image
+            'category_title' => 'Perabotan Rumah',
+            'preview_image' => 'https://via.placeholder.com/400x300.png?text=Perabotan+Rumah' // Placeholder image
         ],
         [
-            'tab_title' => 'Artisan Products',
-            'description' => 'Explore a wide range of artisan products, from pottery to textiles, each telling a unique story.',
-            'preview_image' => 'https://picsum.photos/seed/crafts2/800/600' // Example image
+            'category_title' => 'Dekorasi Rumah',
+            'preview_image' => 'https://via.placeholder.com/400x300.png?text=Dekorasi+Rumah' // Placeholder image
         ],
         [
-            'tab_title' => 'Support Local Crafters',
-            'description' => 'By shopping with us, you support local artisans and help preserve traditional crafting techniques.',
-            'preview_image' => 'https://picsum.photos/seed/crafts3/800/600' // Example image
+            'category_title' => 'Aksesoris',
+            'preview_image' => 'https://via.placeholder.com/400x300.png?text=Aksesoris' // Placeholder image
         ],
     ];
 

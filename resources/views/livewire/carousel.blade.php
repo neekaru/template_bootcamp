@@ -159,9 +159,17 @@
 x-init="init()"
 x-on:destroy="destroy()"
 {{-- MODIFIED CLASS ATTRIBUTE: Added mt-8 for top margin and improved overflow handling --}}
-class="relative w-[90%] sm:w-full max-w-5xl mx-auto overflow-hidden rounded-lg shadow-xl mt-8 contain-layout"
+class="relative w-full sm:w-[90%] max-w-5xl mx-auto overflow-hidden rounded-lg shadow-xl mt-8 contain-layout group"
 style="contain: layout style; backface-visibility: hidden;"
 >
+<!-- Fixed Text Section -->
+<div class="absolute top-0 left-0 w-full sm:w-1/2 h-full p-4 sm:p-8 flex-col justify-center z-20 hidden sm:flex">
+    <h2 class="text-2xl sm:text-4xl font-bold text-gray-800">{{ $fixed_title }}</h2>
+    <h3 class="text-2xl sm:text-4xl font-bold text-gray-800 mb-2 sm:mb-4">{{ $fixed_subtitle }}</h3>
+    <div class="w-24 h-1 bg-orange-500 mb-4"></div>
+    <p class="text-xs sm:text-sm text-gray-600">{{ $fixed_description }}</p>
+</div>
+
 <!-- Carousel items -->
 <div class="h-64 sm:h-96 flex"
      :style="`transform: translateX(-${activeIndex * 100}%); will-change: transform;`"
@@ -169,25 +177,35 @@ style="contain: layout style; backface-visibility: hidden;"
      style="backface-visibility: hidden; transform-style: preserve-3d;"
      @transitionend="handleTransitionEnd()">
     <template x-for="(section, idx) in slidesToDisplay" :key="section._cloneId || idx">
-        <div class="w-full h-full flex-shrink-0 relative bg-cover bg-center carousel-slide"
-             :style="`background-image: url('${section.preview_image}')`">
-            <div class="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center text-white p-4 sm:p-8 text-center">
-                <h2 class="text-xl sm:text-3xl font-bold mb-1 sm:mb-2" x-text="section.tab_title"></h2>
-                <p class="text-xs sm:text-lg" x-text="section.description"></p>
+        <div class="w-full h-full flex-shrink-0 relative carousel-slide flex items-center justify-end">
+            <!-- Image and Category Title Container -->
+            <div class="w-full sm:w-1/2 h-full flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                <!-- Image -->
+                <div class="w-full h-3/4 flex items-center justify-center">
+                    <img :src="section.preview_image" alt="Product Image"
+                         class="max-w-full max-h-full object-contain rounded-lg shadow-lg transition-transform duration-700 ease-in-out"
+                         :style="(activeIndex === idx || (activeIndex === 0 && idx === slidesToDisplay.length -1) || (activeIndex === slidesToDisplay.length -1 && idx === 0) ) ? 'transform: translateX(0); opacity: 1;' : 'transform: translateX(100%); opacity: 0;'">
+                </div>
+                <!-- Category Title -->
+                <div class="w-full h-1/4 flex items-center justify-center text-center">
+                     <h3 class="text-xl sm:text-2xl font-semibold text-gray-700 transition-all duration-500 ease-in-out transform delay-300"
+                        :style="(activeIndex === idx || (activeIndex === 0 && idx === slidesToDisplay.length -1) || (activeIndex === slidesToDisplay.length -1 && idx === 0) ) ? 'opacity: 1; transform: translateY(0);' : 'opacity: 0; transform: translateY(20px);'"
+                        x-text="section.category_title"></h3>
+                </div>
             </div>
         </div>
     </template>
 </div>
 
-<!-- Navigation Buttons (conditionally shown if more than one slide) -->
+<!-- Navigation Buttons (conditionally shown if more than one slide and on hover) -->
 <button @click="prev()" x-show="numOriginalSlides > 1"
-        class="absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white bg-opacity-30 hover:bg-opacity-50 text-gray-800 p-1 sm:p-2 rounded-full focus:outline-none z-10">
+        class="absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-white bg-opacity-30 hover:bg-opacity-50 text-gray-800 p-1 sm:p-2 rounded-full focus:outline-none z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 sm:w-6 sm:h-6">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
     </svg>
 </button>
 <button @click="next()" x-show="numOriginalSlides > 1"
-        class="absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-white bg-opacity-30 hover:bg-opacity-50 text-gray-800 p-1 sm:p-2 rounded-full focus:outline-none z-10">
+        class="absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-white bg-opacity-30 hover:bg-opacity-50 text-gray-800 p-1 sm:p-2 rounded-full focus:outline-none z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 sm:w-6 sm:h-6">
         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
     </svg>
