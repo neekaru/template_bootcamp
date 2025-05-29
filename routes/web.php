@@ -48,3 +48,6 @@ Route::get('/about', \App\Livewire\AboutUs::class)->name('about');
 
 // Cart Page
 Route::get('/cart', \App\Livewire\CartPage::class)->name('cart.index');
+
+// Product Detail Page (Demo)
+Route::get('/product/{productId}', \App\Livewire\ProductDetail::class)->name('product.detail');
