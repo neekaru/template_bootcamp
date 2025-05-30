@@ -51,3 +51,6 @@ Route::get('/cart', \App\Livewire\CartPage::class)->name('cart.index');
 
 // Product Detail Page (Demo)
 Route::get('/product/{productId}', \App\Livewire\ProductDetail::class)->name('product.detail');
+
+// Category Page
+Route::get('/category', \App\Livewire\CategoryPage::class)->name('category.index');

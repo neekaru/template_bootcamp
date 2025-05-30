@@ -7,6 +7,7 @@ module.exports = {
     "./app/View/Components/**/*.php",
     "./app/Livewire/**/*.php",
   ],
+  darkMode: 'class', // or 'media'
   theme: {
     extend: {},
   },
@@ -16,4 +17,4 @@ module.exports = {
   daisyui: {
     themes: ["light", "dark"],
   },
-} 
+}
