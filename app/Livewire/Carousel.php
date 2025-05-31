@@ -18,15 +18,15 @@ class Carousel extends Component
     public $sections = [
         [
             'category_title' => 'Perabotan Rumah',
-            'preview_image' => 'https://via.placeholder.com/400x300.png?text=Perabotan+Rumah' // Placeholder image
+            'preview_image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRX25Qvky6kiLKh5N3lOtEBY2fuHJ4jgNtqQ&s' // Placeholder image
         ],
         [
             'category_title' => 'Dekorasi Rumah',
-            'preview_image' => 'https://via.placeholder.com/400x300.png?text=Dekorasi+Rumah' // Placeholder image
+            'preview_image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXGehmPAs40np12nGy5omH0POo3E9WYXg6FA&s' // Placeholder image
         ],
         [
             'category_title' => 'Aksesoris',
-            'preview_image' => 'https://via.placeholder.com/400x300.png?text=Aksesoris' // Placeholder image
+            'preview_image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQsR38qD1l-Gz3MXVuw_4N1IvCAOvj5-Nmug&s' // Placeholder image
         ],
     ];
 
