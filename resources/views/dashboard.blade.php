@@ -21,10 +21,10 @@
                             {{-- Placeholder for actual image, replace src with dynamic path if available --}}
                             <img src="{{ auth('pembeli')->user()->avatar ? (filter_var(auth('pembeli')->user()->avatar, FILTER_VALIDATE_URL) ? auth('pembeli')->user()->avatar : Illuminate\Support\Facades\Storage::url(auth('pembeli')->user()->avatar)) : 'https://ui-avatars.com/api/?name=' . urlencode(auth('pembeli')->user()->username) . '&color=7F9CF5&background=EBF4FF' }}" alt="Profile Picture" class="w-full h-full object-cover">
                         </div>
-                        {{-- Delete Account Button - Hidden on mobile, shown on desktop --}}
-                        <button class="btn btn-error text-white w-full max-w-xs hidden md:block">
-                            Hapus Akun
-                        </button>
+                        {{-- Delete Account Button - Desktop only --}}
+                        <div class="hidden md:block w-full">
+                            @livewire('pembeli.delete-account')
+                        </div>
                     </div>
 
                     {{-- Right Column: User Details and Action Buttons --}}
@@ -54,17 +54,13 @@
                             </button>
                         </div>
 
-                        {{-- Delete Account Button - Shown on mobile only, positioned after History Order --}}
-                        <div class="md:hidden mt-6 pt-4 border-t border-gray-200">
-                            <button class="btn btn-error text-white w-full">
-                                <i class="fas fa-trash mr-2"></i>
-                                Hapus Akun
-                            </button>
-                        </div>
-
                         {{-- Logout Button - Shown on mobile only --}}
                         <div class="md:hidden mt-4">
                             @livewire('auth.logout')
+                        </div>
+                        {{-- Delete Account Button - Mobile only, under logout --}}
+                        <div class="md:hidden mt-4">
+                            @livewire('pembeli.delete-account')
                         </div>
                     </div>
                 </div>
