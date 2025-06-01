@@ -54,7 +54,7 @@
                                 <label tabindex="0" class="btn btn-ghost flex items-center text-gray-200 hover:text-sky-300 px-2 py-1">
                                     <div class="avatar">
                                         <div class="w-8 h-8 rounded-full">
-                                            <img src="https://i.pravatar.cc/40?u={{ $user->id }}" alt="{{ $user->username }}" />
+                                            <img src="{{ $user->avatar ?? $user->foto_profil }}" alt="User Avatar">
                                         </div>
                                     </div>
                                     <span class="ml-2 hidden lg:inline">{{ $user->username }}</span>
