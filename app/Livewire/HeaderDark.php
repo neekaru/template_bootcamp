@@ -7,11 +7,23 @@ use Illuminate\Support\Facades\Auth;
 
 class HeaderDark extends Component
 {
+    public function logout()
+    {
+        Auth::guard('pembeli')->logout();
+        
+        session()->invalidate();
+        session()->regenerateToken();
+        
+        return $this->redirect('/', navigate: true);
+    }
+
     public function render()
     {
         $isAuthenticated = Auth::guard('pembeli')->check();
+        $user = Auth::guard('pembeli')->user();
         return view('livewire.header-dark', [
-            'isAuthenticated' => $isAuthenticated
+            'isAuthenticated' => $isAuthenticated,
+            'user' => $user
         ]);
     }
 }

@@ -14,7 +14,7 @@
                     <!-- Navigation Links -->
                     <ul class="flex space-x-5 lg:space-x-7 items-center text-sm font-medium text-white">
                         <li><a href="{{ url('/') }}" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Home</a></li>
-                        <li><a href="#" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Kategori</a></li>
+                        <li><a href="/category" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Kategori</a></li>
                         <li><a href="/cart" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Keranjang</a></li>
                         <li><a href="/about" wire:navigate class="px-2 py-1 hover:text-amber-200 transition duration-150">Tentang kami</a></li>
                     </ul>
@@ -51,7 +51,25 @@
                                 Log In
                             </a>
                         @else
-                            @livewire('auth.logout')
+                            <div class="dropdown dropdown-end">
+                                <label tabindex="0" class="btn btn-ghost flex items-center text-white hover:text-amber-200 px-2 py-1">
+                                    <div class="avatar">
+                                        <div class="w-8 h-8 rounded-full">
+                                            <img src="https://i.pravatar.cc/40?u={{ $user->id }}" alt="{{ $user->username }}" />
+                                        </div>
+                                    </div>
+                                    <span class="ml-2 hidden lg:inline">{{ $user->username }}</span>
+                                    <svg class="w-4 h-4 ml-1 hidden lg:inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </label>
+                                <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-amber-50 rounded-box w-52 text-neutral-700">
+                                    <li>
+                                        <a href="{{ route('dashboard') }}" wire:navigate class="hover:bg-amber-100">
+                                            Lihat Profil
+                                        </a>
+                                    </li>
+                                    <li><a wire:click="logout" class="hover:bg-amber-100">Logout</a></li>
+                                </ul>
+                            </div>
                         @endif
                     </div>
                 </nav>

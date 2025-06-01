@@ -19,7 +19,7 @@
                     <div class="flex flex-col items-center md:w-1/3">
                         <div class="w-48 h-48 mb-6 bg-gray-200 rounded-md overflow-hidden">
                             {{-- Placeholder for actual image, replace src with dynamic path if available --}}
-                            <img src="https://i.pravatar.cc/300?u={{ auth('pembeli')->user()->id ?? 'rojabi' }}" alt="Profile Picture" class="w-full h-full object-cover">
+                            <img src="{{ auth('pembeli')->user()->avatar ?? auth('pembeli')->user()->foto_profil }}" alt="Profile Picture" class="w-full h-full object-cover">
                         </div>
                         {{-- Delete Account Button - Hidden on mobile, shown on desktop --}}
                         <button class="btn btn-error text-white w-full max-w-xs hidden md:block">
@@ -30,7 +30,7 @@
                     {{-- Right Column: User Details and Action Buttons --}}
                     <div class="md:w-2/3 space-y-5">
                         <div>
-                            <p class="text-lg text-gray-700"><span class="font-semibold">Nama :</span> {{ auth('pembeli')->user()->nama_lengkap ?? 'Rojabi Nur Ibrahim' }}</p>
+                            <p class="text-lg text-gray-700"><span class="font-semibold">Nama :</span> {{ auth('pembeli')->user()->username ?? auth('pembeli')->user()->nama_lengkap ?? 'Rojabi Nur Ibrahim' }}</p>
                         </div>
                         <div>
                             <p class="text-lg text-gray-700"><span class="font-semibold">Tanggal Bergabung :</span> {{ auth('pembeli')->user()->created_at ? auth('pembeli')->user()->created_at->format('F Y') : 'Januari 2025' }}</p>
@@ -60,6 +60,11 @@
                                 <i class="fas fa-trash mr-2"></i>
                                 Hapus Akun
                             </button>
+                        </div>
+
+                        {{-- Logout Button - Shown on mobile only --}}
+                        <div class="md:hidden mt-4">
+                            @livewire('auth.logout')
                         </div>
                     </div>
                 </div>
