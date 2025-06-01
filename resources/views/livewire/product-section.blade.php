@@ -12,7 +12,9 @@
                         </div>
                         <h3 class="text-lg font-semibold text-base-content mb-1">{{ $produk->nama_produk }}</h3>
                         <p class="text-base-content mb-4">Rp.{{ number_format($produk->harga, 0, ',', '.') }}</p>
-                        <img src="{{ $produk->image_url ?? 'https://via.placeholder.com/300x300.png?text=Produk+Kerajinan' }}" alt="{{ $produk->nama_produk }}" class="w-full h-48 object-contain mb-4">
+                        <a href="/product/{{ $produk->id }}">
+                            <img src="{{ $produk->image_url ?? 'https://via.placeholder.com/300x300.png?text=Produk+Kerajinan' }}" alt="{{ $produk->nama_produk }}" class="w-full h-48 object-contain mb-4">
+                        </a>
                         <button wire:click="addToCart({{ $produk->id }})" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105">
                             Tambah ke keranjang
                         </button>

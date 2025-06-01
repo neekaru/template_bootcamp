@@ -14,6 +14,7 @@ use App\Filament\Resources\ProdukResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProdukResource\RelationManagers;
 use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 
 class ProdukResource extends Resource
 {
@@ -64,7 +65,7 @@ class ProdukResource extends Resource
                         Forms\Components\FileUpload::make('foto')
                             ->label('Foto Produk')
                             ->placeholder('Foto Produk')
-                            ->required(),
+                            ->multiple(),
                     ])
             ]);
     }
@@ -77,7 +78,9 @@ class ProdukResource extends Resource
                 Tables\Columns\TextColumn::make('stok_tersedia'),
                 Tables\Columns\TextColumn::make('kategori_produk'),
                 Tables\Columns\TextColumn::make('ulasan_produk'),
-                Tables\Columns\ImageColumn::make('foto')->url(fn ($record) => $record->image_url)->circular(),
+                Tables\Columns\ImageColumn::make('foto')
+                    ->url(fn ($record) => is_array($record->foto) ? (isset($record->foto[0]) ? Storage::url($record->foto[0]) : null) : ($record->foto ? Storage::url($record->foto) : null))
+                    ->circular(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('d-m-Y H:i:s'),
             ])

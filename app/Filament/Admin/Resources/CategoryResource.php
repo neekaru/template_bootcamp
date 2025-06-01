@@ -54,7 +54,12 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Category Image')
+                    ->placeholder('Category Image'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Category Name')
+                    ->placeholder('Category Name')
             ])
             ->filters([
                 //
