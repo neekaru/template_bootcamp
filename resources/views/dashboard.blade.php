@@ -44,10 +44,10 @@
                                 <i class="fas fa-edit mr-2"></i>
                                 Edit Profile
                             </a>
-                            <button class="btn btn-ghost bg-gray-200 hover:bg-gray-300 text-gray-700 flex-1 py-3">
+                            <a href="{{ route('pembeli.edit-password') }}" wire:navigate class="btn btn-ghost bg-gray-200 hover:bg-gray-300 text-gray-700 flex-1 py-3 text-center flex justify-center items-center">
                                 <i class="fas fa-key mr-2"></i>
                                 Edit Password
-                            </button>
+                            </a>
                             <button class="btn btn-ghost bg-gray-200 hover:bg-gray-300 text-gray-700 flex-1 py-3">
                                 <i class="fas fa-history mr-2"></i>
                                 History Order

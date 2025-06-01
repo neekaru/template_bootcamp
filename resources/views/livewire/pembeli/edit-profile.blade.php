@@ -5,8 +5,8 @@
             <h1 class="text-xl font-bold text-gray-800">Dashboard Pembeli</h1>
         </div>
     </div>
-    <div class="max-w-3xl w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl">
-        <div>
+    <div class="max-w-3xl w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl flex-grow">
+        <div class="mt-0">
             <h2 class="text-3xl font-extrabold text-gray-900 text-center">
                 Ubah Profile
             </h2>

@@ -87,6 +87,6 @@ class EditProfile extends Component
     public function render()
     {
         return view('livewire.pembeli.edit-profile')
-            ->title('Ubah Profile');
+            ->title('Ubah Profil');
     }
 } 
