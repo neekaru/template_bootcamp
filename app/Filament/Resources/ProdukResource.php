@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\ProdukResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProdukResource\RelationManagers;
+use App\Models\Category;
 
 class ProdukResource extends Resource
 {
@@ -50,15 +51,15 @@ class ProdukResource extends Resource
                             ->placeholder('Stok Tersedia')
                             ->required(),
 
-                        Forms\Components\TextInput::make('kategori_produk')
+                        Forms\Components\Select::make('kategori_produk')
                             ->label('Kategori Produk')
-                            ->placeholder('Kategori Produk')
+                            ->options(Category::pluck('name', 'name'))
+                            ->searchable()
                             ->required(),
 
                         Forms\Components\Textarea::make('ulasan_produk')
                             ->label('Ulasan Produk')
-                            ->placeholder('Ulasan Produk')
-                            ->required(),
+                            ->placeholder('Ulasan Produk'),
 
                         Forms\Components\FileUpload::make('foto')
                             ->label('Foto Produk')
