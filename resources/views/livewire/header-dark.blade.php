@@ -54,7 +54,7 @@
                                 <label tabindex="0" class="btn btn-ghost flex items-center text-gray-200 hover:text-sky-300 px-2 py-1">
                                     <div class="avatar">
                                         <div class="w-8 h-8 rounded-full">
-                                            <img src="{{ $user->avatar ?? $user->foto_profil }}" alt="User Avatar">
+                                            <img src="{{ $user->avatar ? (filter_var($user->avatar, FILTER_VALIDATE_URL) ? $user->avatar : Illuminate\Support\Facades\Storage::url($user->avatar)) : 'https://ui-avatars.com/api/?name=' . urlencode($user->username) . '&color=7F9CF5&background=EBF4FF' }}" alt="User Avatar">
                                         </div>
                                     </div>
                                     <span class="ml-2 hidden lg:inline">{{ $user->username }}</span>

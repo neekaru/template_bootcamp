@@ -19,7 +19,7 @@
                     <div class="flex flex-col items-center md:w-1/3">
                         <div class="w-48 h-48 mb-6 bg-gray-200 rounded-md overflow-hidden">
                             {{-- Placeholder for actual image, replace src with dynamic path if available --}}
-                            <img src="{{ auth('pembeli')->user()->avatar ?? auth('pembeli')->user()->foto_profil }}" alt="Profile Picture" class="w-full h-full object-cover">
+                            <img src="{{ auth('pembeli')->user()->avatar ? (filter_var(auth('pembeli')->user()->avatar, FILTER_VALIDATE_URL) ? auth('pembeli')->user()->avatar : Illuminate\Support\Facades\Storage::url(auth('pembeli')->user()->avatar)) : 'https://ui-avatars.com/api/?name=' . urlencode(auth('pembeli')->user()->username) . '&color=7F9CF5&background=EBF4FF' }}" alt="Profile Picture" class="w-full h-full object-cover">
                         </div>
                         {{-- Delete Account Button - Hidden on mobile, shown on desktop --}}
                         <button class="btn btn-error text-white w-full max-w-xs hidden md:block">
@@ -40,10 +40,10 @@
                         </div>
 
                         <div class="flex flex-col sm:flex-row gap-4 mt-6 pt-4">
-                            <button class="btn btn-ghost bg-gray-200 hover:bg-gray-300 text-gray-700 flex-1 py-3">
+                            <a href="{{ route('pembeli.edit-profile') }}" wire:navigate class="btn btn-ghost bg-gray-200 hover:bg-gray-300 text-gray-700 flex-1 py-3 text-center flex justify-center items-center">
                                 <i class="fas fa-edit mr-2"></i>
                                 Edit Profile
-                            </button>
+                            </a>
                             <button class="btn btn-ghost bg-gray-200 hover:bg-gray-300 text-gray-700 flex-1 py-3">
                                 <i class="fas fa-key mr-2"></i>
                                 Edit Password
