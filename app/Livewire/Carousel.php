@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use App\Models\Slider;
 
 #[Layout('components.layouts.app')]
 class Carousel extends Component
@@ -15,25 +16,20 @@ class Carousel extends Component
     public $fixed_subtitle = 'Belanja Sekarang!';
     public $fixed_description = 'Temukan kualitas terbaik dari tangan kreatif anak bangsa.';
 
-    public $sections = [
-        [
-            'category_title' => 'Perabotan Rumah',
-            'preview_image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRX25Qvky6kiLKh5N3lOtEBY2fuHJ4jgNtqQ&s' // Placeholder image
-        ],
-        [
-            'category_title' => 'Dekorasi Rumah',
-            'preview_image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXGehmPAs40np12nGy5omH0POo3E9WYXg6FA&s' // Placeholder image
-        ],
-        [
-            'category_title' => 'Aksesoris',
-            'preview_image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQsR38qD1l-Gz3MXVuw_4N1IvCAOvj5-Nmug&s' // Placeholder image
-        ],
-    ];
-
     // activeIndex and selectSection are no longer needed here as Alpine.js handles it.
 
     public function render()
     {
-        return view('livewire.carousel');
+        $sections = Slider::all()->map(function ($slider) {
+            $imagePath = $slider->image ? asset('storage/' . ltrim($slider->image, '/')) : null;
+            return [
+                'category_title' => $slider->category_name,
+                'preview_image' => $imagePath,
+                'link' => $slider->link,
+            ];
+        })->toArray();
+        return view('livewire.carousel', [
+            'sections' => $sections,
+        ]);
     }
 }

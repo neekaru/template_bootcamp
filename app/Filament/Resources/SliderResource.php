@@ -37,8 +37,7 @@ class SliderResource extends Resource
                 //link
                 Forms\Components\TextInput::make('link')
                     ->label('Link')
-                    ->placeholder('Link')
-                    ->required(),
+                    ->placeholder('Link'),
 
                 //category_name
                 Forms\Components\TextInput::make('category_name')
