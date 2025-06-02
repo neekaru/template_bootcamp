@@ -40,6 +40,12 @@ class SliderResource extends Resource
                     ->placeholder('Link')
                     ->required(),
 
+                //category_name
+                Forms\Components\TextInput::make('category_name')
+                    ->label('Category Name')
+                    ->placeholder('Category Name')
+                    ->nullable(),
+
             ])
 
     ]);
@@ -51,7 +57,7 @@ class SliderResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image'),
                 Tables\Columns\ImageColumn::make('link'),
-                //
+                Tables\Columns\TextColumn::make('category_name'),
             ])
             ->filters([
                 //
