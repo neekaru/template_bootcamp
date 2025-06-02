@@ -59,7 +59,8 @@ class Index extends Component
     {
         return view('livewire.product-detail.index', [
             'product' => $this->product,
-            'quantity' => $this->quantity
+            'quantity' => $this->quantity,
+            // productId is already available via $this->productId for the review component if needed
         ]);
     }
 }

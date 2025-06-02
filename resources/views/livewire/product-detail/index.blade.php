@@ -64,4 +64,9 @@
             </div>
         </div>
     </div>
+
+    {{-- Product Reviews Section --}}
+    <div class="max-w-4xl mx-auto">
+        @livewire('product-detail.product-review', ['productId' => $product->id])
+    </div>
 </div>
