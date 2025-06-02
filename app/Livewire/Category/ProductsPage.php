@@ -5,8 +5,8 @@ namespace App\Livewire\Category;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Produk;
+use App\Models\Cart;
 
 class ProductsPage extends Component
 {
@@ -14,55 +14,45 @@ class ProductsPage extends Component
 
     public $categoryName;
     public $categoryDisplayName;
-    public $products = [];
     public $perPage = 9;
 
     public function mount($categoryName)
     {
         $this->categoryName = $categoryName;
         $this->categoryDisplayName = str_replace('-', ' ', Str::title($categoryName));
+    }
 
-        // Simulate fetching products for this category
-        // Using product details from the user-provided image
-        $owlImageUrl = 'https://via.placeholder.com/150/CD853F/FFFFFF?text=Wooden+Owl+Lamp';
-        $productTemplate = [
-            'id' => uniqid(), // Add unique ID for keying and cart
-            'name' => 'Lampu tidur hias',
-            'price' => 'Rp.40.000',
-            'rating' => 3, // 3 stars as per user image
-            'image' => $owlImageUrl
-        ];
-
-        // Generate more products for pagination demonstration
-        $allProducts = [];
-        for ($i = 0; $i < 25; $i++) { // e.g., 25 products for this category
-            $allProducts[] = array_merge($productTemplate, ['id' => uniqid() . $i]);
+    public function addToCart($produkId)
+    {
+        if (!auth()->guard('pembeli')->check()) {
+            session()->flash('warning', 'Silahkan login terlebih dahulu');
+            return $this->redirect('/login', navigate: true);
         }
-        $this->products = $allProducts;
-    }
-
-    public function addToCart($productName)
-    {
-        // Placeholder for addToCart logic
-        session()->flash('message', $productName . ' ditambahkan ke keranjang.');
-    }
-
-    public function getPageName()
-    {
-        return 'page';
+        $pembeliId = auth()->guard('pembeli')->user()->id;
+        $cartItem = Cart::where('produk_id', $produkId)
+            ->where('pembeli_id', $pembeliId)
+            ->first();
+        if ($cartItem) {
+            $cartItem->increment('qty');
+        } else {
+            Cart::create([
+                'pembeli_id' => $pembeliId,
+                'produk_id' => $produkId,
+                'qty' => 1
+            ]);
+        }
+        session()->flash('message', 'Produk berhasil ditambahkan ke keranjang!');
+        return $this->redirect('/cart', navigate: true);
     }
 
     public function render()
     {
-        $items = Collection::make($this->products);
-        $paginatedItems = new LengthAwarePaginator(
-            $items->forPage($this->getPage(), $this->perPage),
-            $items->count(), $this->perPage, $this->getPage(),
-            ['path' => request()->url(), 'pageName' => $this->getPageName()]
-        );
-
+        $products = Produk::where('kategori_produk', str_replace('-', ' ', Str::title($this->categoryName)))
+            ->latest()
+            ->paginate($this->perPage);
         return view('livewire.category.products-page', [
-            'paginatedProducts' => $paginatedItems,
+            'paginatedProducts' => $products,
+            'categoryDisplayName' => $this->categoryDisplayName,
         ])->layout('components.layouts.app')->title($this->categoryDisplayName . ' Products');
     }
 }
