@@ -1,4 +1,4 @@
-<div class="bg-yellow-50 min-h-screen py-8">
+<div class="min-h-screen py-8">
     <div class="container mx-auto px-4">
         {{-- This outer flex container is responsible for centering the icon group (the inline-grid) --}}
         <div class="flex justify-center">
@@ -36,6 +36,9 @@
             </div>
         </div>
 
-       <hr class="mt-12 border-gray-300">
+        <hr class="mt-12 border-gray-300">
+
+       {{-- Display Product Categories with Items --}}
+       @livewire('category.product-category-display')
     </div>
 </div>
