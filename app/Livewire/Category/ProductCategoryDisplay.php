@@ -11,7 +11,7 @@ class ProductCategoryDisplay extends Component
     public function mount()
     {
         // Placeholder image URL for the owl lamp. User should replace this with their actual image path.
-        $owlImageUrl = 'https://via.placeholder.com/150/FFF8DC/8B4513?text=Owl+Lamp';
+        $owlImageUrl = 'https://via.placeholder.com/150/CD853F/FFFFFF?text=Wooden+Owl+Lamp'; // Updated to better reflect a wooden owl
 
         $productTemplate = ['name' => 'Lampu tidur hias', 'price' => 'Rp.40.000', 'rating' => 4, 'image' => $owlImageUrl];
 

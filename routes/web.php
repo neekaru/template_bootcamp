@@ -57,3 +57,4 @@ Route::get('/product/{productId}', \App\Livewire\ProductDetail\Index::class)->na
 
 // Category Page
 Route::get('/category', \App\Livewire\Category\Index::class)->name('category.index');
+Route::get('/category/{categoryName}', \App\Livewire\Category\ProductsPage::class)->name('category.products');
