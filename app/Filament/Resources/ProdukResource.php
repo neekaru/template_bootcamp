@@ -52,6 +52,14 @@ class ProdukResource extends Resource
                             ->placeholder('Stok Tersedia')
                             ->required(),
 
+                        Forms\Components\TextInput::make('harga')
+                            ->label('Harga Produk')
+                            ->placeholder('Harga Produk')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->minValue(0)
+                            ->required(),
+
                         Forms\Components\Select::make('kategori_produk')
                             ->label('Kategori Produk')
                             ->options(Category::pluck('name', 'name'))
@@ -78,6 +86,7 @@ class ProdukResource extends Resource
                 Tables\Columns\TextColumn::make('stok_tersedia'),
                 Tables\Columns\TextColumn::make('kategori_produk'),
                 Tables\Columns\TextColumn::make('ulasan_produk'),
+                Tables\Columns\TextColumn::make('harga'),
                 Tables\Columns\ImageColumn::make('foto')
                     ->url(fn ($record) => is_array($record->foto) ? (isset($record->foto[0]) ? Storage::url($record->foto[0]) : null) : ($record->foto ? Storage::url($record->foto) : null))
                     ->circular(),
