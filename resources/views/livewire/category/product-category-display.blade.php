@@ -17,7 +17,9 @@
                 @foreach($category['products'] as $product)
                     <div class="card bg-base-100 shadow-md rounded-lg overflow-hidden">
                         <figure class="h-36 flex items-center justify-center p-3 bg-white">
-                            <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" class="max-h-full max-w-full object-contain" />
+                            <a href="/product/{{ $product['id'] }}">
+                                <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" class="max-h-full max-w-full object-contain" />
+                            </a>
                         </figure>
                         <div class="p-3 text-center">
                             <div class="flex justify-center mb-1.5">
@@ -29,7 +31,7 @@
                             </div>
                             <h3 class="text-xs font-medium text-black dark:text-white truncate" title="{{ $product['name'] }}">{{ $product['name'] }}</h3>
                             <p class="text-2xs text-gray-500 dark:text-gray-300 mb-2">{{ $product['price'] }}</p>
-                            <button wire:click="addToCart('{{ $product['name'] }}')" class="btn btn-xs text-white normal-case tracking-normal font-normal" style="background-color: #F97316; border-color: #F97316; min-height: 1.8rem; height: 1.8rem; font-size: 0.65rem; padding-left: 0.75rem; padding-right: 0.75rem;">
+                            <button wire:click="addToCart({{ $product['id'] }})" class="btn btn-xs text-white normal-case tracking-normal font-normal" style="background-color: #F97316; border-color: #F97316; min-height: 1.8rem; height: 1.8rem; font-size: 0.65rem; padding-left: 0.75rem; padding-right: 0.75rem;">
                                 Tambah ke keranjang
                             </button>
                         </div>
