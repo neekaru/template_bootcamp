@@ -142,16 +142,12 @@ class CartPage extends Component
         $cartItems = $this->getCartItems();
 
         if ($cartItems->isEmpty()) {
-            session()->flash('error', 'Keranjang kosong!');
+            session()->flash('error', 'Keranjang kosong! Silahkan tambahkan produk terlebih dahulu.');
             return;
         }
 
-        // Here you would typically create a transaction and redirect to payment
-        // For now, we'll just show a success message
-        session()->flash('success', 'Checkout berhasil! Anda akan diarahkan ke halaman pembayaran.');
-
-        // You can redirect to checkout/payment page here
-        // return $this->redirect('/checkout', navigate: true);
+        // Redirect to the new checkout page
+        return $this->redirectRoute('checkout.index', navigate: true);
     }
 
     public function render()

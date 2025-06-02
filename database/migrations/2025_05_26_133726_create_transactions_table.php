@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('pembeli_id')->constrained('pembelis')->onDelete('cascade');
+            $table->string('invoice')->unique();
+            $table->integer('berat');
+            $table->text('alamat');
+            $table->bigInteger('total');
+            $table->string('status')->default('pending');
+            $table->string('snap_token')->nullable();
             $table->timestamps();
         });
     }

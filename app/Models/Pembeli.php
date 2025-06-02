@@ -28,4 +28,9 @@ class Pembeli extends Authenticatable
     {
         return $this->getKey();
     }
+    
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'pembeli_id');
+    }
 }

@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Account;
+use App\Http\Controllers\MidtransController;
+use App\Livewire\CheckoutPage;
 
 Route::get('/', function () {
     return view('layouts.main'); // This view will just extend the app layout
@@ -58,3 +60,8 @@ Route::get('/product/{productId}', \App\Livewire\ProductDetail\Index::class)->na
 // Category Page
 Route::get('/category', \App\Livewire\Category\Index::class)->name('category.index');
 Route::get('/category/{categoryName}', \App\Livewire\Category\ProductsPage::class)->name('category.products');
+
+Route::post('/midtrans/snap-token', [MidtransController::class, 'getSnapToken'])->name('midtrans.snap_token');
+Route::post('/midtrans/notification', [MidtransController::class, 'notificationHandler'])->name('midtrans.notification');
+
+Route::get('/checkout', CheckoutPage::class)->name('checkout.index')->middleware('auth:pembeli');

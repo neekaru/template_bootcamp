@@ -21,7 +21,11 @@ class Transaction extends Model
 
     public function pembeli()
     {
-        return $this->hasMany(Pembeli::class);
+        return $this->belongsTo(Pembeli::class, 'pembeli_id');
     }
     
+    public function transactionDetails()
+    {
+        return $this->hasMany(TransactionDetail::class, 'transaction_id');
+    }
 }
