@@ -50,9 +50,18 @@
                 </div>
                 <span class="text-2xl font-bold text-gray-800">Rp.{{ number_format($product->harga, 0, ',', '.') }}</span>
             </div>
-            <button wire:click="addToCart" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-md text-center">
-                Tambah ke keranjang
-            </button>
+            <div class="flex space-x-4">
+                <button wire:click="addToCart"
+                    class="flex-1 text-white font-semibold py-3 rounded-md text-center hover:brightness-110"
+                    style="background-color: #f97316;">
+                    Tambah ke keranjang
+                </button>
+                <button wire:click="buyNow"
+                    class="flex-1 text-white font-semibold py-3 rounded-md text-center hover:brightness-110"
+                    style="background-color: #FAA748;">
+                    Beli Sekarang
+                </button>
+            </div>
         </div>
     </div>
 </div>
