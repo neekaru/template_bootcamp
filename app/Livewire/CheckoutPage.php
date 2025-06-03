@@ -85,15 +85,22 @@ class CheckoutPage extends Component
         $this->snapRedirectUrl = null;
     }
 
+    public $isProcessing = false;
+
     public function reviewOrderAndProceed()
     {
-        $this->validate();
+        if ($this->isProcessing) {
+            return;
+        }
 
-        // Remove the address saving code since we don't need it
+        $this->isProcessing = true;
         
-        $cartItems = Cart::with('produk')->where('pembeli_id', auth()->guard('pembeli')->id())->get();
-        if ($cartItems->isEmpty()) {
-            session()->flash('error', 'Keranjang Anda kosong. Tidak dapat melanjutkan.');
+        try {
+            $this->validate();
+            
+            $cartItems = Cart::with('produk')->where('pembeli_id', auth()->guard('pembeli')->id())->get();
+            if ($cartItems->isEmpty()) {
+                session()->flash('error', 'Keranjang Anda kosong. Tidak dapat melanjutkan.');
             return $this->redirectRoute('cart.index', navigate: true);
         }
 
@@ -107,6 +114,13 @@ class CheckoutPage extends Component
             session()->flash('error', 'Terjadi kesalahan saat memproses pesanan: ' . $e->getMessage());
             Log::error('CheckoutPage General Error (reviewOrderAndProceed): ' . $e->getMessage());
             return;
+        }
+
+        } catch (\Exception $e) {
+            Log::error('Checkout error: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan saat memproses pesanan: ' . $e->getMessage());
+        } finally {
+            $this->isProcessing = false;
         }
 
         if ($this->transactionId) {
