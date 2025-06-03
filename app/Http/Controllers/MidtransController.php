@@ -90,45 +90,51 @@ class MidtransController extends Controller
                 'payment_type' => $notification->payment_type
             ]);
 
-            $transaction->payment_status = $transaction_status;
+            $transaction->status = $transaction_status;
             
             switch ($transaction_status) {
                 case 'settlement':
                     // Payment is successful and transaction is settled
-                    $transaction->status = 'paid';
-                    $transaction->payment_date = now();
+                    $transaction->status = 'success';
+                    $transaction->updated_at = now();
                     break;
                 
                 case 'pending':
                     // Transaction is created but waiting for payment
                     $transaction->status = 'pending';
+                    $transaction->updated_at = now();
                     break;
                 
                 case 'deny':
                     // Payment is denied
                     $transaction->status = 'failed';
+                    $transaction->updated_at = now();
                     break;
                 
                 case 'expire':
                     // Transaction is expired
                     $transaction->status = 'expired';
+                    $transaction->updated_at = now();
                     break;
                 
                 case 'cancel':
                     // Transaction is cancelled
                     $transaction->status = 'cancelled';
+                    $transaction->updated_at = now();
                     break;
                 
                 case 'refund':
                 case 'partial_refund':
                     // Payment is refunded
                     $transaction->status = 'refunded';
+                    $transaction->updated_at = now();
                     break;
                 
                 case 'chargeback':
                 case 'partial_chargeback':
                     // Payment is charged back
                     $transaction->status = 'chargeback';
+                    $transaction->updated_at = now();
                     break;
             }
 
@@ -158,15 +164,32 @@ class MidtransController extends Controller
             'transaction_status' => $transactionStatus
         ]);
 
-        if ($statusCode == 200 && $transactionStatus == 'settlement') {
-            // Payment successful
-            session()->flash('success', 'Pembayaran berhasil! Terima kasih atas pesanan Anda.');
-        } elseif ($statusCode == 201 && $transactionStatus == 'pending') {
-            // Payment pending
-            session()->flash('info', 'Menunggu pembayaran Anda. Silakan selesaikan pembayaran sesuai instruksi.');
-        } else {
-            // Payment failed or other status
-            session()->flash('error', 'Terjadi masalah dengan pembayaran. Silakan coba lagi atau hubungi kami untuk bantuan.');
+        try {
+            $transaction = Transaction::where('invoice', $orderId)->firstOrFail();
+
+            if ($statusCode == 200 && $transactionStatus == 'settlement') {
+                // Update transaction status to success
+                $transaction->status = 'success';
+                $transaction->updated_at = now();
+                $transaction->save();
+                // Payment successful message
+                session()->flash('success', 'Pembayaran berhasil! Terima kasih atas pesanan Anda.');
+            } elseif ($statusCode == 201 && $transactionStatus == 'pending') {
+                // Keep status as pending
+                $transaction->status = 'pending';
+                $transaction->save();
+                // Payment pending message
+                session()->flash('info', 'Menunggu pembayaran Anda. Silakan selesaikan pembayaran sesuai instruksi.');
+            } else {
+                // Update status to failed for other cases
+                $transaction->status = 'failed';
+                $transaction->save();
+                // Payment failed message
+                session()->flash('error', 'Terjadi masalah dengan pembayaran. Silakan coba lagi atau hubungi kami untuk bantuan.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Payment Return Handler Error: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan dalam memproses status pembayaran.');
         }
 
         // Redirect to cart page
