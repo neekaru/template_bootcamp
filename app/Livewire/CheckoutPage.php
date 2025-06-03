@@ -97,10 +97,17 @@ class CheckoutPage extends Component
         
         try {
             $this->validate();
-            
-            $cartItems = Cart::with('produk')->where('pembeli_id', auth()->guard('pembeli')->id())->get();
-            if ($cartItems->isEmpty()) {
-                session()->flash('error', 'Keranjang Anda kosong. Tidak dapat melanjutkan.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($e->validator->errors()->has('inputAlamat')) {
+                session()->flash('error', 'Alamat wajib diisi.');
+            }
+            $this->isProcessing = false;
+            return;
+        }
+
+        $cartItems = Cart::with('produk')->where('pembeli_id', auth()->guard('pembeli')->id())->get();
+        if ($cartItems->isEmpty()) {
+            session()->flash('error', 'Keranjang Anda kosong. Tidak dapat melanjutkan.');
             return $this->redirectRoute('cart.index', navigate: true);
         }
 
@@ -116,12 +123,7 @@ class CheckoutPage extends Component
             return;
         }
 
-        } catch (\Exception $e) {
-            Log::error('Checkout error: ' . $e->getMessage());
-            session()->flash('error', 'Terjadi kesalahan saat memproses pesanan: ' . $e->getMessage());
-        } finally {
-            $this->isProcessing = false;
-        }
+        $this->isProcessing = false;
 
         if ($this->transactionId) {
             // Fetch the actual transaction created
@@ -164,10 +166,6 @@ class CheckoutPage extends Component
         }
 
         $this->transactionId = $transaction->id;
-        // Clear cart only after successful transaction creation and payment URL generation might be better
-        // For now, keeping it here. Consider moving it after snapRedirectUrl is confirmed.
-        Cart::where('pembeli_id', $pembeli->id)->delete();
-        $this->dispatch('cartUpdated');
     }
 
     protected function generateSnapRedirectUrlInternal()
@@ -269,4 +267,4 @@ class CheckoutPage extends Component
             'currentTransaction' => $this->transaction // Pass it explicitly for clarity in view
         ]);
     }
-} 
+}

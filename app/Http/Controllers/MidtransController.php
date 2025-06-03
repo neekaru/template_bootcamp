@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -172,6 +173,8 @@ class MidtransController extends Controller
                 $transaction->status = 'success';
                 $transaction->updated_at = now();
                 $transaction->save();
+                // Clear cart on successful payment
+                Cart::where('pembeli_id', $transaction->pembeli_id)->delete();
                 // Payment successful message
                 session()->flash('success', 'Pembayaran berhasil! Terima kasih atas pesanan Anda.');
             } elseif ($statusCode == 201 && $transactionStatus == 'pending') {
@@ -193,6 +196,6 @@ class MidtransController extends Controller
         }
 
         // Redirect to cart page
-        return redirect()->route('cart.index');
+        return redirect()->route('checkout.result', ['invoice' => $transaction->invoice]);
     }
 }

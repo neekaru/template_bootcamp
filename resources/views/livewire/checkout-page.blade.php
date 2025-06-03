@@ -59,15 +59,15 @@
                                 @forelse ($currentTransaction->transactionDetails as $item)
                                     <li class="flex py-6">
                                         <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
-                                            <img src="{{ $item->product->image_url ?? asset('images/default-product.png') }}" 
-                                                 alt="{{ $item->product->name ?? 'Nama Produk' }}" 
-                                                 class="h-full w-full object-cover object-center">
+                                            <img src="{{ is_array($item->product->foto) ? ($item->product->foto[0] ?? asset('images/default-product.png')) : ($item->product->foto ?? asset('images/default-product.png')) }}" 
+                                                alt="{{ $item->product->nama_produk ?? 'Nama Produk' }}" 
+                                                class="h-full w-full object-cover object-center">
                                         </div>
                                         <div class="ml-4 flex flex-1 flex-col">
                                             <div>
                                                 <div class="flex justify-between text-base font-medium text-gray-900 dark:text-white">
                                                     <h3>
-                                                        <a href="#" class="hover:underline">{{ $item->product->name ?? 'Nama Produk' }}</a>
+                                                        <a href="#" class="hover:underline">{{ $item->product->nama_produk ?? 'Nama Produk' }}</a>
                                                     </h3>
                                                     <p class="ml-4">Rp {{ number_format(($item->price ?? $item->product->price) * $item->qty, 0, ',', '.') }}</p>
                                                 </div>
