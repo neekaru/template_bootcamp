@@ -200,9 +200,9 @@ class CheckoutPage extends Component
             ]
         ];
         
-        $finish_redirect_url = route('cart.index');
-        $unfinish_redirect_url = route('checkout.index'); 
-        $error_redirect_url = route('checkout.index');
+        $finish_redirect_url = route('midtrans.payment_return');
+        $unfinish_redirect_url = route('midtrans.payment_return');
+        $error_redirect_url = route('midtrans.payment_return');
 
         $params = [
             'transaction_details' => [

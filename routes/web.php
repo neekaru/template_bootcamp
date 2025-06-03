@@ -63,5 +63,6 @@ Route::get('/category/{categoryName}', \App\Livewire\Category\ProductsPage::clas
 
 Route::post('/midtrans/snap-token', [MidtransController::class, 'getSnapToken'])->name('midtrans.snap_token');
 Route::post('/midtrans/notification', [MidtransController::class, 'notificationHandler'])->name('midtrans.notification');
+Route::get('/midtrans/payment-return', [MidtransController::class, 'handlePaymentReturn'])->name('midtrans.payment_return');
 
 Route::get('/checkout', CheckoutPage::class)->name('checkout.index')->middleware('auth:pembeli');

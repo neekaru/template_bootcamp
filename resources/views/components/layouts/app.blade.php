@@ -49,8 +49,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     @stack('styles')
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
-
     <!-- Theme persistence script for Livewire navigation -->
     <script>
         // Ensure theme is applied immediately on page load
@@ -93,14 +91,12 @@
     <main class="flex-grow pb-16 sm:pb-0">
         {{ $slot }}
     </main>
-
-    @livewire('footer')
     
     <!-- Scripts -->
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     @livewireScripts
-    @livewireAlertScripts
-    @stack('scripts')
+    @livewire('footer')
+
 </body>
 </html>

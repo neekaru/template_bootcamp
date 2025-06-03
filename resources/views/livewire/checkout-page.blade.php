@@ -144,4 +144,7 @@
             </div>
         </div>
     </div>
+    <script>
+        console.log('aku bayar kaya pler')
+    </script>
 </div> 
