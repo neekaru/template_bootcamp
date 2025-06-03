@@ -108,7 +108,7 @@
                                     <button wire:click="reviewOrderAndProceed" 
                                             wire:loading.attr="disabled" 
                                             wire:target="reviewOrderAndProceed"
-                                            class="w-full flex items-center justify-center rounded-md border border-transparent bg-green-600 px-6 py-3.5 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-60 disabled:cursor-not-allowed transition ease-in-out duration-150">
+                                            class="w-full flex items-center justify-center rounded-md border border-transparent bg-orange-500 px-6 py-3.5 text-base font-medium text-white shadow-sm hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-60 disabled:cursor-not-allowed transition ease-in-out duration-150">
                                         @if($isProcessing || $errors->any())
                                             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -129,9 +129,9 @@
                             <div class="mt-6 flex justify-center text-center text-sm text-gray-500 dark:text-gray-400">
                                 <p>
                                     atau
-                                    <a href="{{ route('cart.index') }}" wire:navigate class="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300">
+                                    <a href="{{ route('cart.index') }}" wire:navigate class="font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:underline">
                                         Kembali ke Keranjang
-                                        <span aria-hidden="true"> &rarr;</span>
+                                        <span aria-hidden="true"> →</span>
                                     </a>
                                 </p>
                             </div>
@@ -153,4 +153,4 @@
     <script>
         console.log('aku bayar kaya pler')
     </script>
-</div> 
+</div>
