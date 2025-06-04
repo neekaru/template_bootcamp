@@ -90,6 +90,18 @@
 
     <main class="flex-grow pb-16 sm:pb-0">
         {{ $slot }}
+
+        {{-- FilePond file input example (for demo, place where needed) --}}
+        <input type="file" class="filepond" name="filepond_demo" id="filepond_demo" />
+        @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (window.FilePond) {
+                    FilePond.parse(document.body);
+                }
+            });
+        </script>
+        @endpush
     </main>
     
     <!-- Scripts -->

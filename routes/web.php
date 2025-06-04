@@ -25,8 +25,10 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('register', [RegisterController::class, 'register'])->name('register.submit');
 
 // Social Login Routes
-Route::get('auth/{provider}', [SocialiteController::class, 'redirectToProvider'])->name('social.login');
-Route::get('auth/{provider}/callback', [SocialiteController::class, 'handleProviderCallback'])->name('social.callback');
+Route::prefix('auth')->group(function () {
+    Route::get('{provider}', [SocialiteController::class, 'redirectToProvider'])->name('social.login');
+    Route::get('{provider}/callback', [SocialiteController::class, 'handleProviderCallback'])->name('social.callback');
+});
 
 // Protected routes for Pembeli
 Route::middleware(['auth:pembeli'])->prefix('pembeli')->group(function () {
@@ -39,6 +41,7 @@ Route::middleware(['auth:pembeli'])->prefix('pembeli')->group(function () {
     // Edit Profile Page for Pembeli
     Route::get('/edit-profile', \App\Livewire\Pembeli\EditProfile::class)->name('pembeli.edit-profile');
     Route::get('/edit-password', \App\Livewire\Pembeli\EditPassword::class)->name('pembeli.edit-password');
+    // History Order Page for Pembeli
     Route::get('/history-order', \App\Livewire\Pembeli\HistoryOrder::class)->name('pembeli.history-order');
 });
 
@@ -48,7 +51,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 //route product show
-Route::get('/produk/{slug}', \App\Livewire\Web\Produk\Show::class)->name('web.produk.show');
+Route::prefix('produk')->group(function () {
+    // Product Detail Page (Demo)
+    Route::get('/{productId}', \App\Livewire\ProductDetail\Index::class)->name('product.detail');
+    Route::get('/{slug}', \App\Livewire\Web\Produk\Show::class)->name('web.produk.show');
+});
 
 // About Us page
 Route::get('/about', \App\Livewire\AboutUs::class)->name('about');
@@ -56,12 +63,12 @@ Route::get('/about', \App\Livewire\AboutUs::class)->name('about');
 // Cart Page
 Route::get('/cart', \App\Livewire\CartPage::class)->name('cart.index');
 
-// Product Detail Page (Demo)
-Route::get('/product/{productId}', \App\Livewire\ProductDetail\Index::class)->name('product.detail');
 
 // Category Page
-Route::get('/category', \App\Livewire\Category\Index::class)->name('category.index');
-Route::get('/category/{categoryName}', \App\Livewire\Category\ProductsPage::class)->name('category.products');
+Route::prefix('category')->group(function () {
+    Route::get('/', \App\Livewire\Category\Index::class)->name('category.index');
+    Route::get('/{categoryName}', \App\Livewire\Category\ProductsPage::class)->name('category.products');
+});
 
 // Midtrans Routes
 Route::prefix('midtrans')->group(function () {
@@ -70,5 +77,8 @@ Route::prefix('midtrans')->group(function () {
     Route::get('/payment-return', [MidtransController::class, 'handlePaymentReturn'])->name('midtrans.payment_return');
 });
 
-Route::get('/checkout', CheckoutPage::class)->name('checkout.index')->middleware('auth:pembeli');
-Route::get('/checkout/result/{invoice}', CheckoutResult::class)->name('checkout.result');
+// Checkout Group
+Route::prefix('checkout')->group(function () {
+    Route::get('/', CheckoutPage::class)->name('checkout.index')->middleware('auth:pembeli');
+    Route::get('/result/{invoice}', CheckoutResult::class)->name('checkout.result');
+});

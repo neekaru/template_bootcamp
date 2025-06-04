@@ -17,7 +17,7 @@
                 @foreach($category['products'] as $product)
                     <div class="card bg-base-100 shadow-md rounded-lg overflow-hidden">
                         <figure class="h-36 flex items-center justify-center p-3 bg-white">
-                            <a href="/product/{{ $product['id'] }}">
+                            <a href="/produk/{{ $product['id'] }}">
                                 <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" class="max-h-full max-w-full object-contain" />
                             </a>
                         </figure>
