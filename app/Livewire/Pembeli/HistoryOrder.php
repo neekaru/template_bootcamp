@@ -86,9 +86,10 @@ class HistoryOrder extends Component
         return $this->redirectRoute('checkout.result', ['invoice' => $invoice], navigate: true);
     }
 
-    public function reviewProduk($transactionId)
+    public function reviewProduk($productId, $transactionId = null)
     {
-        session()->flash('info', 'Fitur review untuk pesanan ini belum diimplementasikan.');
+        // User might need to have purchased the product. This can be checked in the review form mount method.
+        return $this->redirectRoute('produk.review', ['productId' => $productId, 'transactionId' => $transactionId]);
     }
 
     public function render()

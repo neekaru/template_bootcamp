@@ -8,10 +8,20 @@ use Illuminate\Support\Facades\Storage;
 class Produk extends Model
 {
     protected $table = 'produks';
-    protected $fillable = ['nama_produk', 'deskripsi_produk', 'stok_tersedia', 'kategori_produk', 'ulasan_produk', 'foto', 'harga'];
+    protected $fillable = ['nama_produk', 'deskripsi_produk', 'stok_tersedia', 'kategori_produk', 'ulasan_id', 'foto', 'harga'];
     protected $casts = [
         'foto' => 'array',
     ];
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'produk_id');
+    }
+
+    public function ulasan()
+    {
+        return $this->belongsTo(Rating::class, 'ulasan_id');
+    }
 
     public function getImageUrlAttribute()
     {

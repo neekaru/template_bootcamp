@@ -60,6 +60,20 @@
 .image-fade-in { animation: imageFadeIn 0.8s ease-out forwards; }
 .image-fade-out { animation: imageFadeOut 0.4s ease-in forwards; }
 
+.filepond--drop-label {
+    color: #4c4e53;
+}
+.filepond--label-action {
+    text-decoration-color: #babdc0;
+}
+.filepond--panel-root {
+    background-color: #f3f4f6;
+    border: 2px dashed #d1d5db;
+}
+.filepond--item-panel {
+    background-color: #e5e7eb;
+}
+
 .carousel-dots {
     position: absolute;
     bottom: 1rem;

@@ -112,7 +112,9 @@
                 
                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-2 justify-end">
                     <button wire:click="lihatDetailPesanan('{{ $transaction->invoice }}')" class="btn btn-sm btn-outline btn-info normal-case">Lihat Detail Pesanan</button>
-                    <button wire:click="reviewProduk({{ $transaction->id }})" class="btn btn-sm btn-neutral normal-case">Review</button>
+                    @if($transaction->status == 'success')
+                        <button wire:click="reviewProduk({{ $detail->product->id }}, {{ $transaction->id }})" class="btn btn-sm btn-neutral normal-case">Review</button>
+                    @endif
                     <button wire:click="beliLagi({{ $transaction->id }})" class="btn btn-sm btn-warning normal-case">Beli lagi</button>
                 </div>
             </div>

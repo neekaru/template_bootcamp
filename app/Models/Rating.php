@@ -22,27 +22,27 @@ class Rating extends Model
 
     public function getImageUrlAttribute()
     {
-        if (is_array($this->foto) && count($this->foto) > 0) {
-            return Storage::url($this->foto[0]);
+        if (is_array($this->foto_review) && count($this->foto_review) > 0) {
+            return Storage::url($this->foto_review[0]);
         }
-        if (is_string($this->foto) && $this->foto) {
-            return Storage::url($this->foto);
+        if (is_string($this->foto_review) && $this->foto_review) {
+            return Storage::url($this->foto_review);
         }
         return null;
     }
 
     public function customer()
     {
-        return $this->belongsTo(Pembeli::class);
+        return $this->belongsTo(Pembeli::class, 'pembeli_id');
     }
 
     public function product()
     {
-        return $this->belongsTo(Produk::class);
+        return $this->belongsTo(Produk::class, 'produk_id');
     }
 
     public function transaction()
     {
-        return $this->belongsTo(Transaction::class);
+        return $this->belongsTo(Transaction::class, 'transaction_id');
     }
 }

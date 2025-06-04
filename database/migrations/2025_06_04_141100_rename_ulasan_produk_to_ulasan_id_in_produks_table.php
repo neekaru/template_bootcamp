@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::table('produks', function (Blueprint $table) {
+            $table->dropColumn('ulasan_produk');
+        });
 
         Schema::table('produks', function (Blueprint $table) {
-            if (!Schema::hasColumn('produks', 'harga')) {
-                $table->decimal('harga', 10, 2)->nullable();
-            }
+            $table->foreignId('ulasan_id')->nullable()->constrained('ratings')->onDelete('set null');
         });
     }
 
@@ -25,7 +26,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('produks', function (Blueprint $table) {
-            //
+            $table->dropForeign(['ulasan_id']);
+            $table->dropColumn('ulasan_id');
+            $table->text('ulasan_produk')->nullable();
         });
     }
 };

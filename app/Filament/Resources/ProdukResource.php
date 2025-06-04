@@ -66,9 +66,13 @@ class ProdukResource extends Resource
                             ->searchable()
                             ->required(),
 
-                        Forms\Components\Textarea::make('ulasan_produk')
+                        Forms\Components\Select::make('ulasan_id')
                             ->label('Ulasan Produk')
-                            ->placeholder('Ulasan Produk'),
+                            ->options(function (): array {
+                                return \App\Models\Rating::all()->pluck('review', 'id')->all();
+                            })
+                            ->searchable()
+                            ->required(),
 
                         Forms\Components\FileUpload::make('foto')
                             ->label('Foto Produk')
@@ -85,7 +89,11 @@ class ProdukResource extends Resource
                 Tables\Columns\TextColumn::make('nama_produk'),
                 Tables\Columns\TextColumn::make('stok_tersedia'),
                 Tables\Columns\TextColumn::make('kategori_produk'),
-                Tables\Columns\TextColumn::make('ulasan_produk'),
+                Tables\Columns\TextColumn::make('ulasan_id')
+                    ->label('Ulasan Produk')
+                    ->formatStateUsing(function ($state) {
+                        return \App\Models\Rating::find($state)?->review ?? '-';
+                    }),
                 Tables\Columns\TextColumn::make('harga'),
                 Tables\Columns\ImageColumn::make('foto')
                     ->url(fn ($record) => is_array($record->foto) ? (isset($record->foto[0]) ? Storage::url($record->foto[0]) : null) : ($record->foto ? Storage::url($record->foto) : null))

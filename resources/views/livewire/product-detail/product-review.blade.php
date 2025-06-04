@@ -1,53 +1,129 @@
-<div class="font-sans">
-    <hr class="my-6 border-gray-300">
-    <div class="bg-white p-4 sm:p-6 rounded-lg">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Left Column: Overall Rating -->
-            <div class="md:col-span-1">
-                <h2 class="text-xl font-semibold mb-3 text-gray-800">Ulasan pembeli</h2>
-                <div class="flex items-center mb-1">
-                    <svg class="w-7 h-7 text-orange-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                    <span class="text-3xl font-bold ml-2 text-gray-800">{{ number_format($overallRating, 1) }}</span>
-                    <span class="text-xl text-gray-500 ml-1">/ {{ number_format($maxRating, 1) }}</span>
-                </div>
-                <p class="text-sm text-gray-600">{{ $satisfactionPercentage }}% customer merasa puas dengan produk ini</p>
+<div class="container mx-auto p-4 sm:p-6 lg:p-8 font-sans">
+    <div class="max-w-2xl mx-auto bg-base-100 shadow-xl rounded-lg p-6">
+        
+        @if (session()->has('success'))
+            <div class="alert alert-success mb-4">
+                {{ session('success') }}
             </div>
+        @endif
+        @if (session()->has('error'))
+            <div class="alert alert-error mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
 
-            <!-- Right Column: Photos and Specific Review -->
-            <div class="md:col-span-2">
-                <h3 class="text-lg font-semibold mb-3 text-gray-800">Foto & Video Pembeli</h3>
-                <div class="flex space-x-2 mb-6 overflow-x-auto pb-2">
-                    @foreach(array_slice($generalReviewPhotos, 0, 5) as $photoUrl)
-                        <img src="{{ $photoUrl }}" alt="Review photo" class="w-16 h-16 object-cover rounded flex-shrink-0">
-                    @endforeach
-                    @if(isset($generalReviewPhotos[5]))
-                    <div class="relative w-16 h-16 flex-shrink-0">
-                        <img src="{{ $generalReviewPhotos[5] }}" alt="More review photos" class="w-full h-full object-cover rounded filter brightness-75">
-                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center rounded">
-                            <span class="text-white font-bold text-base">{{ $countOverlayText }}</span>
-                        </div>
-                    </div>
-                    @endif
-                </div>
-
-                <div class="flex items-start space-x-3">
-                    <!-- User Avatar -->
-                    <div class="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0">
-                        {{-- Placeholder circle for avatar --}}
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-semibold text-gray-800">{{ $userReview['name'] }}</p>
-                        <p class="text-sm text-gray-700 my-2 leading-relaxed">
-                            {{ $userReview['text'] }}
-                        </p>
-                        <div class="flex space-x-2 mt-2 overflow-x-auto pb-2">
-                            @foreach($userReview['photos'] as $photo)
-                                <img src="{{ $photo }}" alt="User review photo" class="w-20 h-20 object-cover rounded border border-gray-200 flex-shrink-0">
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
+        <div class="flex items-start space-x-4 mb-6">
+            <img src="{{ $product->image_url ?? 'https://via.placeholder.com/100' }}" alt="{{ $product->nama_produk }}" class="w-24 h-24 object-cover rounded-md border">
+            <div>
+                <h1 class="text-xl font-semibold text-gray-800 dark:text-white">{{ $product->nama_produk }}</h1>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Bagaimana penilaian anda tentang barang ini??</p>
             </div>
         </div>
+
+        <form wire:submit.prevent="submitReview">
+            <div class="mb-6">
+                <div class="flex items-center space-x-1">
+                    @for ($i = 1; $i <= 5; $i++)
+                        <svg wire:click="setRating({{ $i }})" 
+                             class="w-10 h-10 cursor-pointer {{ $rating >= $i ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" 
+                             fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                    @endfor
+                    @if($rating > 0)
+                        <span class="ml-3 text-gray-700 dark:text-gray-300 font-medium">{{ $this->rating_text }}</span>
+                    @else
+                        <span class="ml-3 text-gray-500 dark:text-gray-400">Sangat baik?</span>
+                    @endif
+                </div>
+                @error('rating') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="mb-6">
+                <label for="review_text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Berikan ulasan anda untuk produk ini</label>
+                <textarea wire:model.defer="review_text" id="review_text" rows="4" 
+                          class="textarea textarea-bordered w-full dark:bg-gray-700 dark:text-white"
+                          placeholder="Ketikkan deskripsi anda tentang produk..."></textarea>
+                @error('review_text') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+            </div>            
+            <div class="mb-8">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Bagikan foto-foto dari produk yang anda beli
+                </label>
+                <div wire:ignore>                
+                    <input type="file" 
+                        x-data="{ pond: null }"
+                        x-init="$nextTick(() => {
+                            if (typeof FilePond === 'undefined') {
+                                console.error('FilePond is not loaded');
+                                return;
+                            }
+                            try {
+                                pond = FilePond.create($el, {
+                                    credits: false,
+                                    allowMultiple: true,
+                                    maxFiles: 5,
+                                    acceptedFileTypes: ['image/*'],
+                                    maxFileSize: '3MB',
+                                    server: {
+                                        process: (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
+                                            @this.upload('photos', file, load, error, progress)
+                                        },
+                                        revert: (filename, load) => {
+                                            @this.removeUpload('photos', filename, load)
+                                        },
+                                    },
+                                    labelIdle: 'Seret & Lepas foto Anda atau <span class=&quot;filepond--label-action&quot;>Jelajahi</span>',
+                                    labelFileProcessingComplete: 'Upload selesai',                                       
+                                    labelTapToUndo: 'ketuk untuk membatalkan',
+                                    labelTapToCancel: 'ketuk untuk membatalkan',
+                                    labelFileWaitingForSize: 'Menunggu ukuran',
+                                    labelFileSizeNotAvailable: 'Ukuran tidak tersedia',
+                                    labelFileLoading: 'Memuat',
+                                    labelFileLoadError: 'Gagal memuat',
+                                    labelFileProcessing: 'Mengunggah',
+                                    labelFileProcessingError: 'Gagal mengunggah',
+                                    labelTapToRetry: 'ketuk untuk mencoba lagi',
+                                    stylePanelLayout: 'compact',
+                                    imagePreviewHeight: 100,
+                                    labelButtonRemoveItem: 'Hapus',
+                                    labelButtonProcessItem: 'Unggah',
+                                    labelMaxFileSizeExceeded: 'File terlalu besar',
+                                    labelMaxFileSize: 'Ukuran maksimal file adalah 3MB'
+                                });
+                            } catch (error) {
+                                console.error('Error initializing FilePond:', error);
+                            }
+                        })"
+                        name="photos" 
+                        multiple>
+                </div>
+                @error('photos') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+                @error('photos.*') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+            </div>            
+            <div wire:loading wire:target="photos" wire:dirty.class.remove="hidden" class="hidden text-sm text-gray-500 mb-4">
+                <span class="inline-flex items-center">
+                    <span class="loading loading-spinner loading-xs mr-2"></span>
+                    Mengunggah foto...
+                </span>
+            </div>            
+            <div class="flex justify-end space-x-3">
+                <button type="button" wire:click="cancel" class="btn btn-outline normal-case">Batal</button>                
+                <div class="relative inline-flex">
+                    <button type="submit" 
+                        class="btn btn-primary normal-case bg-orange-500 hover:bg-orange-600 border-orange-500 hover:border-orange-600 text-white" 
+                        wire:loading.class="opacity-50 cursor-wait"
+                        wire:loading.attr="disabled"
+                        wire:target="submitReview">
+                        <span wire:loading.flex wire:target="submitReview" class="flex items-center hidden">
+                            <span class="loading loading-spinner loading-xs mr-2"></span>
+                            Mengirim...
+                        </span>
+                        <span wire:loading.remove wire:target="submitReview">Kirim</span>
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
+

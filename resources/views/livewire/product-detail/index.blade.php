@@ -15,14 +15,16 @@
         <div class="md:w-1/2 p-5">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ $product->nama_produk }}</h1>
             <div class="flex items-center mb-3">
+                @php
+                    $avgRating = $product->ratings()->avg('rating');
+                    $reviewCount = $product->ratings()->count();
+                @endphp
                 <div class="flex text-yellow-400">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="far fa-star text-gray-400"></i>
+                    @for ($i = 1; $i <= 5; $i++)
+                        <i class="{{ $avgRating >= $i ? 'fas' : 'far' }} fa-star {{ $avgRating >= $i ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                    @endfor
                 </div>
-                <span class="ml-2 text-sm text-gray-600">(79 review)</span>
+                <span class="ml-2 text-sm text-gray-600">({{ $reviewCount }} review)</span>
             </div>
             <h2 class="text-xl font-semibold text-gray-700 mb-2">Detail produk</h2>
             <p class="text-gray-600 text-sm mb-4">
@@ -67,6 +69,63 @@
 
     {{-- Product Reviews Section --}}
     <div class="max-w-4xl mx-auto">
-        @livewire('product-detail.product-review', ['productId' => $product->id])
+        @if($reviewCount > 0)
+            <script>
+                // Initialize GLightbox on page load and after Livewire updates
+                function initGLightbox() {
+                    if (typeof GLightbox !== 'undefined') {
+                        const lightbox = GLightbox({
+                            touchNavigation: true,
+                            loop: true,
+                            autoplayVideos: true
+                        });
+                    }
+                }
+
+                // Initial load
+                document.addEventListener('DOMContentLoaded', initGLightbox);
+
+                // After Livewire updates
+                document.addEventListener('livewire:navigated', initGLightbox);
+                document.addEventListener('livewire:initialized', initGLightbox);
+            </script>
+            <h2 class="text-lg font-semibold text-gray-800 mt-4 mb-4">Ulasan Pembeli</h2>
+            <div class="space-y-6">
+                @foreach($product->ratings()->latest()->take(5)->get() as $rating)
+                    <div class="bg-gray-50 rounded-lg p-4 shadow flex flex-col sm:flex-row gap-4">
+                        <div class="flex-shrink-0">
+                            <img src="{{ $rating->customer && $rating->customer->image ? asset('storage/avatars/' . $rating->customer->image) : 'https://ui-avatars.com/api/?name=' . urlencode($rating->customer->username ?? 'User') }}" alt="{{ $rating->customer->username ?? 'User' }}" class="w-12 h-12 rounded-full border">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center mb-1">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <i class="{{ $rating->rating >= $i ? 'fas' : 'far' }} fa-star {{ $rating->rating >= $i ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                                @endfor
+                                <span class="ml-2 text-xs text-gray-500">{{ $rating->created_at->format('d M Y') }}</span>
+                            </div>
+                            <p class="text-gray-700 text-sm mb-1">{{ $rating->review }}</p>
+                            @if($rating->foto_review)
+                                @php
+                                    $fotoReviewArray = is_array($rating->foto_review)
+                                        ? $rating->foto_review
+                                        : json_decode($rating->foto_review, true);
+                                @endphp
+                                @if(is_array($fotoReviewArray) && count($fotoReviewArray) > 0)
+                                    <div class="flex gap-2 mt-2">
+                                        @foreach($fotoReviewArray as $foto)
+                                            <a href="{{ asset('storage/' . ltrim($foto, '/')) }}" class="glightbox" data-gallery="review-{{$rating->id}}">
+                                                <img src="{{ asset('storage/' . ltrim($foto, '/')) }}" alt="Foto Review" class="w-16 h-16 object-cover rounded hover:opacity-75 transition-opacity">
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p class="text-gray-500">Belum ada ulasan untuk produk ini.</p>
+        @endif
     </div>
 </div>
