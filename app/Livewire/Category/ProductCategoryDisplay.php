@@ -21,8 +21,9 @@ class ProductCategoryDisplay extends Component
         ];
 
         $this->categoriesWithProducts = collect($categoryNames)->map(function ($catName) {
-            $category = Category::where('name', $catName)->first();
-            $products = Produk::where('kategori_produk', $catName)
+            $category = Category::where('name', $catName)->first();            $products = Produk::where('kategori_produk', $catName)
+                ->withAvg('ratings', 'rating')
+                ->withCount('ratings')
                 ->latest()
                 ->take(3)
                 ->get()
@@ -31,7 +32,8 @@ class ProductCategoryDisplay extends Component
                         'id' => $produk->id,
                         'name' => $produk->nama_produk,
                         'price' => 'Rp.' . number_format($produk->harga, 0, ',', '.'),
-                        'rating' => 4, // You can replace with real rating if available
+                        'rating' => $produk->ratings_avg_rating ?? 0,
+                        'rating_count' => $produk->ratings_count,
                         'image' => $produk->image_url ?? 'https://via.placeholder.com/150?text=No+Image',
                     ];
                 });

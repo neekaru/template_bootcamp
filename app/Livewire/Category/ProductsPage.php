@@ -46,8 +46,10 @@ class ProductsPage extends Component
     }
 
     public function render()
-    {
+    {        
         $products = Produk::where('kategori_produk', str_replace('-', ' ', Str::title($this->categoryName)))
+            ->withAvg('ratings', 'rating')
+            ->withCount('ratings')
             ->latest()
             ->paginate($this->perPage);
         return view('livewire.category.products-page', [

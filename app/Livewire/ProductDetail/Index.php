@@ -14,7 +14,10 @@ class Index extends Component
     public function mount($productId)
     {
         $this->productId = $productId;
-        $this->product = Produk::findOrFail($productId);
+        $this->product = Produk::with(['ratings.customer'])
+            ->withAvg('ratings', 'rating')
+            ->withCount('ratings')
+            ->findOrFail($productId);
     }
 
     public function incrementQuantity()

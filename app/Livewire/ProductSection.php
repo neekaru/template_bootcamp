@@ -9,7 +9,12 @@ class ProductSection extends Component
 {
     public function render()
     {
-        $produks = Produk::latest()->take(6)->get();
+        $produks = Produk::with('ratings')
+            ->withAvg('ratings', 'rating')
+            ->withCount('ratings')
+            ->latest()
+            ->take(6)
+            ->get();
         return view('livewire.product-section', compact('produks'));
     }
 
