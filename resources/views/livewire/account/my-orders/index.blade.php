@@ -67,7 +67,7 @@
                     @endforelse
 
                     <!-- Navigasi Pagination -->
-                    {{ $transactions->links('vendor.pagination.simple-default') }}
+                    {{ $transactions->links() }} {{-- Use default pagination --}}
 
 
                 </div>

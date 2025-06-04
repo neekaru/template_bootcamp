@@ -39,6 +39,7 @@ Route::middleware(['auth:pembeli'])->prefix('pembeli')->group(function () {
     // Edit Profile Page for Pembeli
     Route::get('/edit-profile', \App\Livewire\Pembeli\EditProfile::class)->name('pembeli.edit-profile');
     Route::get('/edit-password', \App\Livewire\Pembeli\EditPassword::class)->name('pembeli.edit-password');
+    Route::get('/history-order', \App\Livewire\Pembeli\HistoryOrder::class)->name('pembeli.history-order');
 });
 
 // Protected routes for admin (Filament)

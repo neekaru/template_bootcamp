@@ -48,10 +48,10 @@
                                 <i class="fas fa-key mr-2"></i>
                                 Edit Password
                             </a>
-                            <button class="btn btn-ghost bg-gray-200 hover:bg-gray-300 text-gray-700 flex-1 py-3">
+                            <a href="{{ route('pembeli.history-order') }}" wire:navigate class="btn btn-ghost bg-gray-200 hover:bg-gray-300 text-gray-700 flex-1 py-3 text-center flex justify-center items-center">
                                 <i class="fas fa-history mr-2"></i>
                                 History Order
-                            </button>
+                            </a>
                         </div>
 
                         {{-- Logout Button - Shown on mobile only --}}

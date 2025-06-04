@@ -9,11 +9,11 @@ class Index extends Component
 {
     public function render()
     {
-        //get transactions
+        //get all transactions without pagination
         $transactions = Transaction::query()
             ->where('pembeli_id', auth()->guard('pembeli')->user()->id)
             ->latest()
-            ->simplePaginate(3);
+            ->get();
 
         return view('livewire.account.my-orders.index', compact('transactions'));
     }
