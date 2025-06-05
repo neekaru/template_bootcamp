@@ -111,6 +111,9 @@
                 @endforeach
                 
                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-2 justify-end">
+                    @if($transaction->status == 'pending' || $transaction->status == 'diproses')
+                        <button wire:click="bayarSekarang({{ $transaction->id }})" class="btn btn-primary btn-sm">Bayar Sekarang</button>
+                    @endif
                     <button wire:click="lihatDetailPesanan('{{ $transaction->invoice }}')" class="btn btn-sm btn-outline btn-info normal-case">Lihat Detail Pesanan</button>
                     @if($transaction->status == 'success')
                         <button wire:click="reviewProduk({{ $detail->product->id }}, {{ $transaction->id }})" class="btn btn-sm btn-neutral normal-case">Review</button>
@@ -138,3 +141,21 @@
         {{ $transactions->links() }}
     </div>
 </div>
+
+@push('scripts')
+<script>
+    window.addEventListener('pay-with-snap', function(e) {
+        if (e.detail.snapToken) {
+            payWithSnap(e.detail.snapToken);
+        }
+    });
+</script>
+<script>
+    window.addEventListener('redirect-to-snap', function(e) {
+        if (e.detail.url) {
+            console.log('sigma')
+            window.open(e.detail.url, '_blank');
+        }
+    });
+</script>
+@endpush

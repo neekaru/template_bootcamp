@@ -3,6 +3,7 @@
 namespace App\Livewire\Pembeli;
 
 use App\Models\Cart;
+use Midtrans;
 use App\Models\Transaction;
 use App\Models\Category as ProductCategory;
 use Livewire\Component;
@@ -24,6 +25,15 @@ class HistoryOrder extends Component
         'statusFilter' => ['except' => ''],
         'selectedCategory' => ['except' => ''],
     ];
+
+
+    public function boot()
+    {
+        \Midtrans\Config::$serverKey = config('midtrans.server_key');
+        \Midtrans\Config::$isProduction = config('midtrans.is_production', false);
+        \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized', true);
+        \Midtrans\Config::$is3ds = config('midtrans.is_3ds', true);
+    }
 
     public function mount()
     {
@@ -90,6 +100,96 @@ class HistoryOrder extends Component
     {
         // User might need to have purchased the product. This can be checked in the review form mount method.
         return $this->redirectRoute('produk.review', ['productId' => $productId, 'transactionId' => $transactionId]);
+    }
+
+    public function bayarSekarang($transactionId)
+    {
+        $transaction = Transaction::with('transactionDetails.product', 'pembeli')->findOrFail($transactionId);
+        if ($transaction->status === 'pending' && empty($transaction->snap_token)) {
+            // Use the same logic as CheckoutPage for Midtrans Snap redirect URL
+            $items = [];
+            $totalAmount = 0;
+            foreach ($transaction->transactionDetails as $detail) {
+                $price = intval($detail->price);
+                $quantity = intval($detail->quantity);
+                $subtotalItem = $price * $quantity;
+                $totalAmount += $subtotalItem;
+                $items[] = [
+                    'id'       => strval($detail->product->id),
+                    'price'    => $price,
+                    'quantity' => $quantity,
+                    'name'     => $detail->product->nama_produk ?? 'Produk #' . $detail->product->id,
+                ];
+            }
+            $customer_details = [
+                'first_name' => $transaction->pembeli->username,
+                'last_name'  => '',
+                'email'      => $transaction->pembeli->email,
+                'shipping_address' => [
+                    'first_name' => $transaction->pembeli->username,
+                    'address'    => $transaction->alamat,
+                ]
+            ];
+            $finish_redirect_url = route('midtrans.payment_return');
+            $unfinish_redirect_url = route('midtrans.payment_return');
+            $error_redirect_url = route('midtrans.payment_return');
+            $params = [
+                'transaction_details' => [
+                    'order_id'     => $transaction->invoice,
+                    'gross_amount' => $totalAmount,
+                ],
+                'item_details'        => $items,
+                'customer_details'    => $customer_details,
+                'callbacks' => [
+                    'finish' => $finish_redirect_url,
+                    'unfinish' => $unfinish_redirect_url,
+                    'error' => $error_redirect_url,
+                ],
+                'expiry' => [
+                    'start_time' => date('Y-m-d H:i:s O'),
+                    'unit' => 'hour',
+                    'duration' => 24,
+                ],
+            ];
+            try {
+                $midtransTransaction = \Midtrans\Snap::createTransaction($params);
+                $transaction->snap_token = $midtransTransaction->token;
+                $transaction->save();
+                return redirect()->away($midtransTransaction->redirect_url);
+            } catch (\Exception $e) {
+                // If order_id already used, generate a new one and retry
+                if (str_contains($e->getMessage(), 'order_id sudah digunakan') || str_contains($e->getMessage(), 'order_id has already been taken')) {
+                    $orderId = $transaction->invoice . '-' . now()->format('His');
+                    $params['transaction_details']['order_id'] = $orderId;
+                    $transaction->invoice = $orderId;
+                    $midtransTransaction = \Midtrans\Snap::createTransaction($params);
+                    $transaction->snap_token = $midtransTransaction->token;
+                    $transaction->save();
+                    return redirect()->away($midtransTransaction->redirect_url);
+                } else {
+                    session()->flash('error', 'Gagal membuat Snap Redirect URL: ' . $e->getMessage());
+                    return;
+                }
+            }
+        } else if ($transaction->snap_token) {
+            // If snap_token exists, try to get the redirect_url again
+            $params = [
+                'transaction_details' => [
+                    'order_id'     => $transaction->invoice,
+                    'gross_amount' => $transaction->total,
+                ],
+            ];
+            try {
+                $midtransTransaction = \Midtrans\Snap::createTransaction($params);
+                return redirect()->away($midtransTransaction->redirect_url);
+            } catch (\Exception $e) {
+                session()->flash('error', 'Gagal mendapatkan link pembayaran: ' . $e->getMessage());
+                return;
+            }
+        } else {
+            session()->flash('error', 'Snap token tidak ditemukan. Silakan hubungi admin.');
+            return;
+        }
     }
 
     public function render()

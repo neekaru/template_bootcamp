@@ -60,7 +60,24 @@ class MidtransController extends Controller
             ],
             'item_details'        => $items,
             'customer_details'    => $customer_details,
-            // 'enabled_payments' => ['credit_card', 'gopay', 'shopeepay', 'other_qris', 'bca_va', 'bni_va', 'bri_va'] // Optional: specify enabled payment methods
+            'enabled_payments' => [
+                'credit_card',
+                'gopay',
+                'shopeepay',
+                'qris',
+                'bca_va',
+                'bni_va',
+                'bri_va',
+                'permata_va',
+                'echannel',
+                'indomaret',
+                'alfamart',
+            ],
+            'expiry' => [
+                'start_time' => now()->format('Y-m-d H:i:s O'),
+                'unit' => 'hour',
+                'duration' => 24
+            ]
         ];
 
         try {
