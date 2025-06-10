@@ -9,9 +9,12 @@ class ProductSection extends Component
 {
     public function render()
     {
-        $produks = Produk::with('ratings')
+        $produks = Produk::with(['ratings' => function($query) {
+                $query->select('produk_id', 'rating'); // Only select needed fields
+            }])
             ->withAvg('ratings', 'rating')
             ->withCount('ratings')
+            ->select('id', 'nama_produk', 'harga', 'foto', 'deskripsi_produk', 'kategori_produk') // Only select needed fields
             ->latest()
             ->take(6)
             ->get();

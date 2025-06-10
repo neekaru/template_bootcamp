@@ -31,7 +31,9 @@ class Checkout extends Component
         }
         
         $this->carts = Cart::where('pembeli_id', auth()->guard('pembeli')->id())
-                           ->with('produk')
+                           ->with(['produk' => function($query) {
+                               $query->select('id', 'nama_produk', 'harga', 'foto', 'deskripsi_produk', 'kategori_produk', 'berat');
+                           }])
                            ->get();
                            
         // Redirect if cart is empty

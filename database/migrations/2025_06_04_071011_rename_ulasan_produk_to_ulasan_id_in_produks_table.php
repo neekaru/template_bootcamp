@@ -11,13 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('produks', function (Blueprint $table) {
-            $table->dropColumn('ulasan_produk');
-        });
+        // Check if column exists before dropping
+        if (Schema::hasColumn('produks', 'ulasan_produk')) {
+            Schema::table('produks', function (Blueprint $table) {
+                $table->dropColumn('ulasan_produk');
+            });
+        }
 
-        Schema::table('produks', function (Blueprint $table) {
-            $table->foreignId('ulasan_id')->nullable()->constrained('ratings')->onDelete('set null');
-        });
+        // Check if ulasan_id column doesn't exist before adding
+        if (!Schema::hasColumn('produks', 'ulasan_id')) {
+            Schema::table('produks', function (Blueprint $table) {
+                $table->foreignId('ulasan_id')->nullable()->constrained('ratings')->onDelete('set null');
+            });
+        }
     }
 
     /**

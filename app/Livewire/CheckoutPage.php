@@ -40,7 +40,9 @@ class CheckoutPage extends Component
             return $this->redirectRoute('login', navigate: true);
         }
 
-        $cartItems = Cart::with('produk')->where('pembeli_id', auth()->guard('pembeli')->id())->get();
+        $cartItems = Cart::with(['produk' => function($query) {
+            $query->select('id', 'nama_produk', 'harga', 'foto', 'deskripsi_produk', 'kategori_produk', 'berat');
+        }])->where('pembeli_id', auth()->guard('pembeli')->id())->get();
         if ($cartItems->isEmpty()) {
             session()->flash('info', 'Keranjang Anda kosong. Silahkan tambahkan produk terlebih dahulu.');
             return $this->redirectRoute('cart.index', navigate: true);
@@ -105,7 +107,9 @@ class CheckoutPage extends Component
             return;
         }
 
-        $cartItems = Cart::with('produk')->where('pembeli_id', auth()->guard('pembeli')->id())->get();
+        $cartItems = Cart::with(['produk' => function($query) {
+            $query->select('id', 'nama_produk', 'harga', 'foto', 'deskripsi_produk', 'kategori_produk', 'berat');
+        }])->where('pembeli_id', auth()->guard('pembeli')->id())->get();
         if ($cartItems->isEmpty()) {
             session()->flash('error', 'Keranjang Anda kosong. Tidak dapat melanjutkan.');
             return $this->redirectRoute('cart.index', navigate: true);
@@ -126,8 +130,8 @@ class CheckoutPage extends Component
         $this->isProcessing = false;
 
         if ($this->transactionId) {
-            // Fetch the actual transaction created
-            $this->transaction = Transaction::with('pembeli', 'transactionDetails.product')->find($this->transactionId);
+            // Fetch the actual transaction created with proper eager loading
+            $this->transaction = Transaction::with(['pembeli', 'transactionDetails.product'])->find($this->transactionId);
             if ($this->transaction) {
                 $this->generateSnapRedirectUrlInternal();
                 if ($this->snapRedirectUrl) {
@@ -241,13 +245,12 @@ class CheckoutPage extends Component
             $this->snapRedirectUrl = $midtransTransaction->redirect_url;
             
             if ($this->transaction->total != $totalAmount) {
-                Log::warning('Transaction total updated during Midtrans redirect URL generation (Internal).', [
-                    'old_total' => $this->transaction->total, 
-                    'new_total' => $totalAmount,
+                Log::warning('Transaction total mismatch during Midtrans redirect URL generation (Internal).', [
+                    'database_total' => $this->transaction->total,
+                    'calculated_total' => $totalAmount,
                     'invoice' => $this->transaction->invoice
                 ]);
-                $this->transaction->total = $totalAmount;
-                $this->transaction->save(); // Save if updated
+                // Don't update the total here to prevent price reset
             }
 
         } catch (\Exception $e) {

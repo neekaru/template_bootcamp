@@ -69,7 +69,7 @@
                                                     <h3>
                                                         <a href="#" class="hover:underline">{{ $item->product->nama_produk ?? 'Nama Produk' }}</a>
                                                     </h3>
-                                                    <p class="ml-4">Rp {{ number_format(($item->price ?? $item->product->price) * $item->qty, 0, ',', '.') }}</p>
+                                                    <p class="ml-4">Rp {{ number_format(($item->price ?: ($item->product->harga ?: 0)) * $item->qty, 0, ',', '.') }}</p>
                                                 </div>
                                             </div>
                                             <div class="flex flex-1 items-end justify-between text-sm">

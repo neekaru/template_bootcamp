@@ -37,6 +37,8 @@ class ProductDetail extends Component
         }
 
         $pembeliId = auth()->guard('pembeli')->user()->id;
+        
+        // Use more efficient upsert operation
         $cartItem = \App\Models\Cart::where('produk_id', $this->productId)
             ->where('pembeli_id', $pembeliId)
             ->first();

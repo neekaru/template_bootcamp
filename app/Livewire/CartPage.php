@@ -33,6 +33,7 @@ class CartPage extends Component
 
         if ($cartItem) {
             $cartItem->increment('qty');
+            $this->clearCartCache(); // Clear cache after modification
             session()->flash('success', 'Kuantitas berhasil ditambah');
         }
     }
@@ -45,6 +46,7 @@ class CartPage extends Component
 
         if ($cartItem && $cartItem->qty > 1) {
             $cartItem->decrement('qty');
+            $this->clearCartCache(); // Clear cache after modification
             session()->flash('success', 'Kuantitas berhasil dikurangi');
         } elseif ($cartItem && $cartItem->qty == 1) {
             $this->removeItem($cartId);
@@ -59,6 +61,7 @@ class CartPage extends Component
 
         if ($cartItem) {
             $cartItem->delete();
+            $this->clearCartCache(); // Clear cache after modification
             session()->flash('success', 'Item berhasil dihapus dari keranjang');
         }
     }
@@ -112,23 +115,47 @@ class CartPage extends Component
         }
     }
 
+    private $cachedCartItems;
+
     public function getCartItems()
     {
-        return Cart::with('produk')
-                   ->where('pembeli_id', auth()->guard('pembeli')->user()->id)
-                   ->get();
+        // Cache cart items to avoid repeated database queries
+        if (!isset($this->cachedCartItems)) {
+            $this->cachedCartItems = Cart::with(['produk' => function($query) {
+                $query->select('id', 'nama_produk', 'harga', 'foto', 'deskripsi_produk', 'kategori_produk', 'berat');
+            }])->where('pembeli_id', auth()->guard('pembeli')->user()->id)
+              ->get();
+        }
+        return $this->cachedCartItems;
     }
+
+    // Clear cache when cart is modified
+    private function clearCartCache()
+    {
+        $this->cachedCartItems = null;
+        $this->cachedSubtotal = null;
+        $this->cachedTotalItems = null;
+    }
+
+    private $cachedSubtotal;
+    private $cachedTotalItems;
 
     public function getSubtotal()
     {
-        return $this->getCartItems()->sum(function ($item) {
-            return $item->qty * $item->produk->harga;
-        });
+        if (!isset($this->cachedSubtotal)) {
+            $this->cachedSubtotal = $this->getCartItems()->sum(function ($item) {
+                return $item->qty * $item->produk->harga;
+            });
+        }
+        return $this->cachedSubtotal;
     }
 
     public function getTotalItems()
     {
-        return $this->getCartItems()->sum('qty');
+        if (!isset($this->cachedTotalItems)) {
+            $this->cachedTotalItems = $this->getCartItems()->sum('qty');
+        }
+        return $this->cachedTotalItems;
     }
 
     public function getGrandTotal()
