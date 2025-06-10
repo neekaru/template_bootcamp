@@ -15,7 +15,7 @@ use Mokhosh\FilamentRating\Components\Rating;
 
 class RatingResource extends Resource
 {
-    protected static ?string $model = Rating::class;
+    protected static ?string $model = ModelsRating::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-sparkles';
 
@@ -98,7 +98,7 @@ class RatingResource extends Resource
 
     public static function canCreate(): bool
     {
-        return false ;
+        return true ;
     }
 
     public static function getRelations(): array

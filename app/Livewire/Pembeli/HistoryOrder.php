@@ -60,7 +60,9 @@ class HistoryOrder extends Component
 
     public function beliLagi($transactionId)
     {
-        $transaction = Transaction::with('transactionDetails.product')
+        $transaction = Transaction::with(['transactionDetails.product' => function($query) {
+                $query->whereNotNull('nama_produk')->where('nama_produk', '!=', '');
+            }])
             ->where('id', $transactionId)
             ->where('pembeli_id', Auth::guard('pembeli')->id())
             ->first();
@@ -70,8 +72,15 @@ class HistoryOrder extends Component
             return;
         }
 
+        $addedCount = 0;
         foreach ($transaction->transactionDetails as $detail) {
-            if ($detail->product) {
+            // Only add products that exist and have valid data
+            if ($detail->produk_id &&
+                $detail->produk_id > 0 &&
+                $detail->product &&
+                $detail->product->nama_produk &&
+                trim($detail->product->nama_produk) !== '') {
+                
                 $cartItem = Cart::where('produk_id', $detail->produk_id)
                     ->where('pembeli_id', Auth::guard('pembeli')->id())
                     ->first();
@@ -85,9 +94,16 @@ class HistoryOrder extends Component
                         'qty' => $detail->quantity
                     ]);
                 }
+                $addedCount++;
             }
         }
-        session()->flash('success', 'Produk dari pesanan telah ditambahkan kembali ke keranjang!');
+        
+        if ($addedCount > 0) {
+            session()->flash('success', "Produk dari pesanan telah ditambahkan kembali ke keranjang! ({$addedCount} produk ditambahkan)");
+        } else {
+            session()->flash('warning', 'Tidak ada produk yang tersedia dari pesanan ini untuk ditambahkan ke keranjang.');
+        }
+        
         return $this->redirectRoute('cart.index', navigate: true);
     }
 
@@ -104,22 +120,38 @@ class HistoryOrder extends Component
 
     public function bayarSekarang($transactionId)
     {
-        $transaction = Transaction::with('transactionDetails.product', 'pembeli')->findOrFail($transactionId);
+        $transaction = Transaction::with(['transactionDetails.product' => function($query) {
+                $query->whereNotNull('nama_produk')->where('nama_produk', '!=', '');
+            }], 'pembeli')->findOrFail($transactionId);
         if ($transaction->status === 'pending' && empty($transaction->snap_token)) {
             // Use the same logic as CheckoutPage for Midtrans Snap redirect URL
             $items = [];
             $totalAmount = 0;
             foreach ($transaction->transactionDetails as $detail) {
-                $price = intval($detail->price);
-                $quantity = intval($detail->quantity);
-                $subtotalItem = $price * $quantity;
-                $totalAmount += $subtotalItem;
-                $items[] = [
-                    'id'       => strval($detail->product->id),
-                    'price'    => $price,
-                    'quantity' => $quantity,
-                    'name'     => $detail->product->nama_produk ?? 'Produk #' . $detail->product->id,
-                ];
+                // Only process items with valid products
+                if ($detail->produk_id &&
+                    $detail->produk_id > 0 &&
+                    $detail->product &&
+                    $detail->product->nama_produk &&
+                    trim($detail->product->nama_produk) !== '') {
+                    
+                    $price = intval($detail->price);
+                    $quantity = intval($detail->quantity);
+                    $subtotalItem = $price * $quantity;
+                    $totalAmount += $subtotalItem;
+                    $items[] = [
+                        'id'       => strval($detail->product->id),
+                        'price'    => $price,
+                        'quantity' => $quantity,
+                        'name'     => $detail->product->nama_produk ?? 'Produk #' . $detail->product->id,
+                    ];
+                }
+            }
+            
+            // Check if we have any valid items to pay for
+            if (empty($items)) {
+                session()->flash('error', 'Tidak ada produk yang valid untuk dibayar dalam transaksi ini.');
+                return;
             }
             $customer_details = [
                 'first_name' => $transaction->pembeli->username,
@@ -194,14 +226,25 @@ class HistoryOrder extends Component
 
     public function render()
     {
-        $query = Transaction::with('transactionDetails.product')
+        $query = Transaction::with(['transactionDetails' => function ($detailQuery) {
+                // Only load transaction details that have valid products
+                $detailQuery->whereNotNull('produk_id')
+                           ->where('produk_id', '>', 0)
+                           ->with(['product' => function ($productQuery) {
+                               // Only load products that exist and have required fields
+                               $productQuery->whereNotNull('nama_produk')
+                                          ->where('nama_produk', '!=', '');
+                           }]);
+            }])
             ->where('pembeli_id', Auth::guard('pembeli')->id());
 
         if (!empty($this->search)) {
             $query->where(function ($q) {
                 $q->where('invoice', 'like', '%' . $this->search . '%')
                   ->orWhereHas('transactionDetails.product', function ($prodQuery) {
-                      $prodQuery->where('nama_produk', 'like', '%' . $this->search . '%');
+                      $prodQuery->where('nama_produk', 'like', '%' . $this->search . '%')
+                               ->whereNotNull('nama_produk')
+                               ->where('nama_produk', '!=', '');
                   });
             });
         }
@@ -222,6 +265,27 @@ class HistoryOrder extends Component
         }
 
         $transactions = $query->latest()->paginate(3);
+        
+        // Filter out transactions that have no valid transaction details after loading
+        $transactions->getCollection()->transform(function ($transaction) {
+            // Filter transaction details to only include those with valid products
+            $transaction->transactionDetails = $transaction->transactionDetails->filter(function ($detail) {
+                return $detail->produk_id &&
+                       $detail->produk_id > 0 &&
+                       $detail->product &&
+                       $detail->product->nama_produk &&
+                       trim($detail->product->nama_produk) !== '';
+            });
+            return $transaction;
+        });
+
+        // Remove transactions that have no valid details after filtering
+        $transactions->setCollection(
+            $transactions->getCollection()->filter(function ($transaction) {
+                return $transaction->transactionDetails->count() > 0;
+            })
+        );
+
         $categories = ProductCategory::orderBy('name')->pluck('name')->toArray();
 
         return view('livewire.pembeli.history-order', [

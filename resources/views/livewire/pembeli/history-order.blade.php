@@ -91,23 +91,25 @@
                 </div>
 
                 @foreach ($transaction->transactionDetails as $detail)
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center mb-4 last:mb-0">
-                        <img src="{{ isset($detail->product->foto[0]) ? asset('storage/' . $detail->product->foto[0]) : asset('images/default-product.png') }}"
-                             alt="{{ $detail->product->nama_produk ?? '' }}"
-                             class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md mr-0 sm:mr-4 mb-3 sm:mb-0 flex-shrink-0">
-                        <div class="flex-grow">
-                            <h3 class="text-md font-semibold text-gray-800 dark:text-white">{{ $detail->product->nama_produk }}</h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">
-                                {{ $detail->quantity }} barang x Rp {{ number_format($detail->price, 0, ',', '.') }}
-                            </p>
+                    @if($detail->produk_id && $detail->produk_id > 0 && $detail->product && $detail->product->nama_produk && trim($detail->product->nama_produk) !== '')
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center mb-4 last:mb-0">
+                            <img src="{{ isset($detail->product->foto[0]) ? asset('storage/' . $detail->product->foto[0]) : asset('images/default-product.png') }}"
+                                 alt="{{ $detail->product->nama_produk ?? 'Produk' }}"
+                                 class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md mr-0 sm:mr-4 mb-3 sm:mb-0 flex-shrink-0">
+                            <div class="flex-grow">
+                                <h3 class="text-md font-semibold text-gray-800 dark:text-white">{{ $detail->product->nama_produk }}</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ $detail->quantity }} barang x Rp {{ number_format($detail->price, 0, ',', '.') }}
+                                </p>
+                            </div>
+                            @if ($loop->first)
+                            <div class="sm:ml-auto mt-3 sm:mt-0 text-left sm:text-right flex-shrink-0">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Total Belanja</p>
+                                <p class="text-lg font-bold text-gray-800 dark:text-white">Rp {{ number_format($transaction->total, 0, ',', '.') }}</p>
+                            </div>
+                            @endif
                         </div>
-                        @if ($loop->first)
-                        <div class="sm:ml-auto mt-3 sm:mt-0 text-left sm:text-right flex-shrink-0">
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Total Belanja</p>
-                            <p class="text-lg font-bold text-gray-800 dark:text-white">Rp {{ number_format($transaction->total, 0, ',', '.') }}</p>
-                        </div>
-                        @endif
-                    </div>
+                    @endif
                 @endforeach
                 
                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-2 justify-end">
@@ -116,7 +118,18 @@
                     @endif
                     <button wire:click="lihatDetailPesanan('{{ $transaction->invoice }}')" class="btn btn-sm btn-outline btn-info normal-case">Lihat Detail Pesanan</button>
                     @if($transaction->status == 'success')
-                        <button wire:click="reviewProduk({{ $detail->product->id }}, {{ $transaction->id }})" class="btn btn-sm btn-neutral normal-case">Review</button>
+                        @php
+                            $firstValidDetail = $transaction->transactionDetails->first(function ($detail) {
+                                return $detail->produk_id &&
+                                       $detail->produk_id > 0 &&
+                                       $detail->product &&
+                                       $detail->product->nama_produk &&
+                                       trim($detail->product->nama_produk) !== '';
+                            });
+                        @endphp
+                        @if($firstValidDetail)
+                            <button wire:click="reviewProduk({{ $firstValidDetail->product->id }}, {{ $transaction->id }})" class="btn btn-sm btn-neutral normal-case">Review</button>
+                        @endif
                     @endif
                     <button wire:click="beliLagi({{ $transaction->id }})" class="btn btn-sm btn-warning normal-case">Beli lagi</button>
                 </div>

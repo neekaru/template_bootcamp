@@ -71,8 +71,7 @@ class ProdukResource extends Resource
                             ->options(function (): array {
                                 return \App\Models\Rating::all()->pluck('review', 'id')->all();
                             })
-                            ->searchable()
-                            ->required(),
+                            ->searchable(),
 
                         Forms\Components\FileUpload::make('foto')
                             ->label('Foto Produk')

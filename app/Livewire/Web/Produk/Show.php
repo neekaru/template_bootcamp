@@ -6,7 +6,7 @@ use App\Models\Produk;
 use Livewire\Component;
 
 class Show extends Component
-{    
+{
     /**
      * slug
      *
