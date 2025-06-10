@@ -10,42 +10,46 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+
     public function up(): void
     {
-        // Make transaction_id nullable temporarily
-        Schema::table('transaction_details', function (Blueprint $table) {
-            $table->integer('transaction_id')->nullable()->change();
-        });
+        if (Schema::hasTable('transaction_details')) {
 
-        // Copy data from transactions_id to transaction_id
-        DB::statement('UPDATE transaction_details SET transaction_id = transactions_id WHERE transaction_id IS NULL AND transactions_id IS NOT NULL');
-        
-        // Copy data from products_id to produk_id
-        DB::statement('UPDATE transaction_details SET produk_id = products_id WHERE produk_id IS NULL AND products_id IS NOT NULL');
+            Schema::table('transaction_details', function (Blueprint $table) {
+                $table->integer('transaction_id')->nullable()->change();
+            });
 
-        // Make transaction_id required again
-        Schema::table('transaction_details', function (Blueprint $table) {
-            $table->integer('transaction_id')->nullable(false)->change();
-        });
-        
-        // Drop redundant columns
-        Schema::table('transaction_details', function (Blueprint $table) {
-            // Drop foreign key constraints first
+            // Cek apakah kolom 'transactions_id' ada sebelum update
             if (Schema::hasColumn('transaction_details', 'transactions_id')) {
-                $table->dropForeign(['transactions_id']);
-                $table->dropColumn('transactions_id');
+                DB::statement('UPDATE transaction_details SET transaction_id = transactions_id WHERE transaction_id IS NULL AND transactions_id IS NOT NULL');
             }
-            
+
             if (Schema::hasColumn('transaction_details', 'products_id')) {
-                $table->dropForeign(['products_id']);
-                $table->dropColumn('products_id');
+                DB::statement('UPDATE transaction_details SET produk_id = products_id WHERE produk_id IS NULL AND products_id IS NOT NULL');
             }
-            
-            if (Schema::hasColumn('transaction_details', 'qty')) {
-                $table->dropColumn('qty');
-            }
-        });
+
+            Schema::table('transaction_details', function (Blueprint $table) {
+                $table->integer('transaction_id')->nullable(false)->change();
+            });
+
+            Schema::table('transaction_details', function (Blueprint $table) {
+                if (Schema::hasColumn('transaction_details', 'transactions_id')) {
+                    $table->dropForeign(['transactions_id']);
+                    $table->dropColumn('transactions_id');
+                }
+
+                if (Schema::hasColumn('transaction_details', 'products_id')) {
+                    $table->dropForeign(['products_id']);
+                    $table->dropColumn('products_id');
+                }
+
+                if (Schema::hasColumn('transaction_details', 'qty')) {
+                    $table->dropColumn('qty');
+                }
+            });
+        }
     }
+
 
     /**
      * Reverse the migrations.

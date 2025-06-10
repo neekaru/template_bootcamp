@@ -11,13 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('produks', function (Blueprint $table) {
-            $table->dropColumn('ulasan_produk');
-        });
+        if (Schema::hasTable('produks')) {
+            Schema::table('produks', function (Blueprint $table) {
+                if (Schema::hasColumn('produks', 'ulasan_produk')) {
+                    $table->dropColumn('ulasan_produk');
+                }
+            });
 
-        Schema::table('produks', function (Blueprint $table) {
-            $table->foreignId('ulasan_id')->nullable()->constrained('ratings')->onDelete('set null');
-        });
+            Schema::table('produks', function (Blueprint $table) {
+                if (!Schema::hasColumn('produks', 'ulasan_id')) {
+                    $table->foreignId('ulasan_id')->nullable()->constrained('ratings')->onDelete('set null');
+                }
+            });
+        }
     }
 
     /**
@@ -25,10 +31,17 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('produks', function (Blueprint $table) {
-            $table->dropForeign(['ulasan_id']);
-            $table->dropColumn('ulasan_id');
-            $table->text('ulasan_produk')->nullable();
-        });
+        if (Schema::hasTable('produks')) {
+            Schema::table('produks', function (Blueprint $table) {
+                if (Schema::hasColumn('produks', 'ulasan_id')) {
+                    $table->dropForeign(['ulasan_id']);
+                    $table->dropColumn('ulasan_id');
+                }
+
+                if (!Schema::hasColumn('produks', 'ulasan_produk')) {
+                    $table->text('ulasan_produk')->nullable();
+                }
+            });
+        }
     }
 };
