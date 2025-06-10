@@ -231,11 +231,11 @@ class HistoryOrder extends Component
         // Define a reusable condition for what constitutes a valid product detail
         $validProductDetailCondition = function ($detailQuery) {
             $detailQuery->whereNotNull('produk_id')
-                        ->where('produk_id', '>', 0)
-                        ->whereHas('product', function ($productQuery) {
-                            $productQuery->whereNotNull('nama_produk')
-                                         ->where('nama_produk', '!=', '');
-                        });
+            ->where('produk_id', '>', 0)
+            ->whereHas('product', function ($productQuery) {
+                $productQuery->whereNotNull('nama_produk')
+                ->where('nama_produk', '!=', '');
+            });
         };
 
         $query = Transaction::query()
