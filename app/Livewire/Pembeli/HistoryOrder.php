@@ -226,25 +226,42 @@ class HistoryOrder extends Component
 
     public function render()
     {
-        $query = Transaction::with(['transactionDetails' => function ($detailQuery) {
-                // Only load transaction details that have valid products
-                $detailQuery->whereNotNull('produk_id')
-                           ->where('produk_id', '>', 0)
-                           ->with(['product' => function ($productQuery) {
-                               // Only load products that exist and have required fields
-                               $productQuery->whereNotNull('nama_produk')
-                                          ->where('nama_produk', '!=', '');
-                           }]);
-            }])
-            ->where('pembeli_id', Auth::guard('pembeli')->id());
+        $pembeliId = Auth::guard('pembeli')->id();
+
+        // Define a reusable condition for what constitutes a valid product detail
+        $validProductDetailCondition = function ($detailQuery) {
+            $detailQuery->whereNotNull('produk_id')
+                        ->where('produk_id', '>', 0)
+                        ->whereHas('product', function ($productQuery) {
+                            $productQuery->whereNotNull('nama_produk')
+                                         ->where('nama_produk', '!=', '');
+                        });
+        };
+
+        $query = Transaction::query()
+            ->where('pembeli_id', $pembeliId)
+            // Core filter: Only include transactions that have at least one valid detail.
+            // This is applied BEFORE pagination.
+            ->whereHas('transactionDetails', $validProductDetailCondition)
+            // Eager load: For the selected transactions, load only their valid details
+            // and associated products.
+            ->with([
+                'transactionDetails' => function ($detailLoadQuery) use ($validProductDetailCondition) {
+                    // Apply the same condition to filter which details are loaded
+                    $validProductDetailCondition($detailLoadQuery);
+                    // And ensure the product itself is loaded for these valid details
+                    $detailLoadQuery->with('product');
+                },
+                'pembeli' // Eager load pembeli if needed elsewhere (e.g. bayarSekarang method)
+            ]);
 
         if (!empty($this->search)) {
             $query->where(function ($q) {
                 $q->where('invoice', 'like', '%' . $this->search . '%')
-                  ->orWhereHas('transactionDetails.product', function ($prodQuery) {
-                      $prodQuery->where('nama_produk', 'like', '%' . $this->search . '%')
-                               ->whereNotNull('nama_produk')
-                               ->where('nama_produk', '!=', '');
+                  // Search within products of (already established) valid details
+                  ->orWhereHas('transactionDetails.product', function ($prodSearchQuery) {
+                      $prodSearchQuery->where('nama_produk', 'like', '%' . $this->search . '%');
+                        // No need to re-check for nama_produk != '' here as $validProductDetailCondition covers it.
                   });
             });
         }
@@ -259,6 +276,7 @@ class HistoryOrder extends Component
         }
 
         if (!empty($this->selectedCategory)) {
+            // Filter by category of (already established) valid products within valid details
             $query->whereHas('transactionDetails.product.category', function ($catQuery) {
                 $catQuery->where('name', $this->selectedCategory);
             });
@@ -266,25 +284,9 @@ class HistoryOrder extends Component
 
         $transactions = $query->latest()->paginate(3);
         
-        // Filter out transactions that have no valid transaction details after loading
-        $transactions->getCollection()->transform(function ($transaction) {
-            // Filter transaction details to only include those with valid products
-            $transaction->transactionDetails = $transaction->transactionDetails->filter(function ($detail) {
-                return $detail->produk_id &&
-                       $detail->produk_id > 0 &&
-                       $detail->product &&
-                       $detail->product->nama_produk &&
-                       trim($detail->product->nama_produk) !== '';
-            });
-            return $transaction;
-        });
-
-        // Remove transactions that have no valid details after filtering
-        $transactions->setCollection(
-            $transactions->getCollection()->filter(function ($transaction) {
-                return $transaction->transactionDetails->count() > 0;
-            })
-        );
+        // The post-query filtering on the collection is no longer needed here,
+        // as the main query now handles the filtering of transactions
+        // before pagination.
 
         $categories = ProductCategory::orderBy('name')->pluck('name')->toArray();
 
