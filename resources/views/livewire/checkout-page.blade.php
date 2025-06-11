@@ -69,7 +69,10 @@
                                                     <h3>
                                                         <a href="#" class="hover:underline">{{ $item->product->nama_produk ?? 'Nama Produk' }}</a>
                                                     </h3>
-                                                    <p class="ml-4">Rp {{ number_format(($item->price ?: ($item->product->harga ?: 0)) * $item->qty, 0, ',', '.') }}</p>
+                                                    <p class="ml-4 harga-produk"
+                                                       data-harga="{{ ($produkHarga[$item->product->id ?? null] ?? 0) * $item->qty }}">
+                                                        Rp {{ number_format(($produkHarga[$item->product->id ?? null] ?? 0) * $item->qty, 0, ',', '.') }}
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div class="flex flex-1 items-end justify-between text-sm">
@@ -100,10 +103,12 @@
                             {{-- Action Buttons --}}
                             <div class="mt-8">
                                 @if ($showPaymentButton && $snapRedirectUrl)
-                                    <a href="{{ $snapRedirectUrl }}" 
-                                       class="w-full flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3.5 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                    <button type="button"
+                                            id="btn-midtrans"
+                                            onclick="window.location.href='{{ $snapRedirectUrl }}'"
+                                            class="w-full flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3.5 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                                         <i class="fas fa-credit-card mr-2"></i> Lanjutkan ke Pembayaran (Midtrans)
-                                    </a>
+                                    </button>
                                 @else
                                     <button wire:click="reviewOrderAndProceed" 
                                             wire:loading.attr="disabled" 
@@ -150,7 +155,43 @@
             </div>
         </div>
     </div>
-    <script>
-        console.log('aku bayar kaya pler')
-    </script>
 </div>
+
+@if ($currentTransaction)
+<script>
+    function setupHargaRestore() {
+        let hargaArray = [];
+        const hargaEls = document.querySelectorAll('ul[role="list"] li .harga-produk');
+        hargaEls.forEach(function(el, idx) {
+            let harga = parseInt(el.getAttribute('data-harga'));
+            // Only store harga if it's not 0
+            if (harga !== 0) {
+                hargaArray[idx] = harga;
+            }
+            // Set up MutationObserver for each harga-produk
+            const observer = new MutationObserver(function() {
+                let hargaNow = parseInt(el.getAttribute('data-harga'));
+                // Only restore if we have a previous harga and it was not 0
+                if (hargaNow === 0 && hargaArray[idx] && hargaArray[idx] !== 0) {
+                    el.textContent = 'Rp ' + hargaArray[idx].toLocaleString('id-ID');
+                    el.setAttribute('data-harga', hargaArray[idx]);
+                }
+                // If hargaArray[idx] is undefined or 0, do nothing (don't force to 1000 or any value)
+                // console.log(hargaNow);
+            });
+            observer.observe(el, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['data-harga'] });
+        });
+    }
+
+    // Always listen for DOM changes and re-apply observers
+    const hargaRestoreListener = () => setupHargaRestore();
+
+    document.addEventListener('DOMContentLoaded', hargaRestoreListener);
+
+    if (window.Livewire) {
+        window.Livewire.hook('message.processed', hargaRestoreListener);
+    }
+    const observer = new MutationObserver(hargaRestoreListener);
+    observer.observe(document.body, { childList: true, subtree: true });
+</script>
+@endif

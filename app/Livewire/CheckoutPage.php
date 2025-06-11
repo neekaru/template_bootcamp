@@ -165,7 +165,7 @@ class CheckoutPage extends Component
                 'transaction_id' => $transaction->id,
                 'produk_id'     => $item->produk_id,
                 'quantity'      => $item->qty,
-                'price'         => $item->produk->harga,
+                'price'         => $item->produk->harga, // Store the price at time of purchase
             ]);
         }
 
@@ -183,14 +183,15 @@ class CheckoutPage extends Component
         $items = [];
         $totalAmount = 0;
         
+        // Use price from transaction_details instead of current product price
         foreach ($this->transaction->transactionDetails as $detail) {
-            $price = intval($detail->price);
+            $price = intval($detail->price); // Use stored price from transaction_details
             $quantity = intval($detail->quantity);
             $subtotalItem = $price * $quantity;
             $totalAmount += $subtotalItem;
             $items[] = [
                 'id'       => strval($detail->product->id),
-                'price'    => $price,
+                'price'    => $price, // Use stored price
                 'quantity' => $quantity,
                 'name'     => $detail->product->nama_produk ?? 'Produk #' . $detail->product->id,
             ];
@@ -244,13 +245,20 @@ class CheckoutPage extends Component
             $midtransTransaction = Midtrans\Snap::createTransaction($params);
             $this->snapRedirectUrl = $midtransTransaction->redirect_url;
             
+            // Verify that calculated total matches stored total
             if ($this->transaction->total != $totalAmount) {
                 Log::warning('Transaction total mismatch during Midtrans redirect URL generation (Internal).', [
                     'database_total' => $this->transaction->total,
                     'calculated_total' => $totalAmount,
                     'invoice' => $this->transaction->invoice
                 ]);
-                // Don't update the total here to prevent price reset
+                
+                // Update the transaction total to match calculated total from stored prices
+                $this->transaction->update(['total' => $totalAmount]);
+                Log::info('Transaction total updated to match calculated total from stored prices.', [
+                    'invoice' => $this->transaction->invoice,
+                    'new_total' => $totalAmount
+                ]);
             }
 
         } catch (\Exception $e) {
@@ -266,8 +274,16 @@ class CheckoutPage extends Component
     {
         // If the real transaction is loaded (after reviewOrderAndProceed), use it.
         // Otherwise, the summary $this->transaction from mount() is used.
+        // Pass product prices for each transaction detail for fallback
+        $produkHarga = [];
+        if ($this->transaction && isset($this->transaction->transactionDetails)) {
+            foreach ($this->transaction->transactionDetails as $item) {
+                $produkHarga[$item->product->id ?? null] = $item->product->harga ?? 0;
+            }
+        }
         return view('livewire.checkout-page', [
-            'currentTransaction' => $this->transaction // Pass it explicitly for clarity in view
+            'currentTransaction' => $this->transaction, // Pass it explicitly for clarity in view
+            'produkHarga' => $produkHarga,
         ]);
     }
 }
