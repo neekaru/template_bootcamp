@@ -1,4 +1,4 @@
-<div class="bg-base-50 py-8 text-base-content">
+<div class="bg-base-50 dark:bg-base-200 py-8 text-base-content">
     <div class="container mx-auto px-6">
         <div class="flex flex-col md:flex-row gap-8">
             <!-- Left Section: Logo + Description -->
@@ -48,7 +48,7 @@
             </div>
         </div>
         <div class="text-center mt-8 pt-6 border-t border-base-200 text-xs">
-            COPYRIGHT@2025 KreasiKita - AllRight
+            Copyright @2025 KreasiKita - AllRight
         </div>
     </div>
 </div>

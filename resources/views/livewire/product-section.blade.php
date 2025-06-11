@@ -33,7 +33,7 @@
             @endforeach
         </div>
         <div class="text-center mt-10">
-            <a href="#" class="text-orange-600 font-semibold text-lg hover:text-orange-700">
+            <a href="/category" class="text-orange-600 font-semibold text-lg hover:text-orange-700">
                 Lihat barang lainnya >>>
             </a>
         </div>

@@ -264,15 +264,15 @@
     class="relative w-full sm:w-[90%] max-w-5xl mx-auto overflow-hidden rounded-lg shadow-xl mt-8 carousel-container group"
 >
     <!-- Fixed Text Section -->
-    <div class="absolute top-0 left-0 w-full sm:w-1/2 h-full p-4 sm:p-8 flex-col justify-center z-20 hidden sm:flex bg-gradient-to-r from-white/95 to-white/80 backdrop-blur-sm">
-        <h2 class="text-2xl sm:text-4xl font-bold text-gray-800">{{ $fixed_title }}</h2>
-        <h3 class="text-2xl sm:text-4xl font-bold text-gray-800 mb-2 sm:mb-4">{{ $fixed_subtitle }}</h3>
+    <div class="absolute top-0 left-0 w-full sm:w-1/2 h-full p-4 sm:p-8 flex-col justify-center z-2 hidden sm:flex bg-gradient-to-r backdrop-blur-sm">
+        <h2 class="text-2xl sm:text-4xl font-bold text-gray-800 dark:text-light">{{ $fixed_title }}</h2>
+        <h3 class="text-2xl sm:text-4xl font-bold text-gray-800 dark:text-light mb-2 sm:mb-4">{{ $fixed_subtitle }}</h3>
         <div class="w-24 h-1 bg-orange-500 mb-4"></div>
-        <p class="text-xs sm:text-sm text-gray-600">{{ $fixed_description }}</p>
+        <p class="text-xs sm:text-sm text-gray-600 dark:text-light">{{ $fixed_description }}</p>
     </div>
 
     <!-- Carousel Track -->
-    <div class="h-64 sm:h-96 flex carousel-track"
+    <div class="h-64 sm:h-96 flex z-3 carousel-track"
         :style="`transform: translateX(-${activeIndex * 100}%);`"
         :class="{ 'smooth-transition': transitionEnabled }"
         @transitionend="handleTransitionEnd()">

@@ -8,6 +8,7 @@ module.exports = {
     "./app/Livewire/**/*.php",
   ],
   darkMode: 'class', // or 'media'
+  lightMode: 'class',
   theme: {
     extend: {},
   },

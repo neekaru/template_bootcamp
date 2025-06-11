@@ -8,7 +8,7 @@
     @foreach($categoriesWithProducts as $category)
         <div class="mb-10">
             <div class="flex justify-between items-center mb-5">
-                <h2 class="text-xl font-bold dark:text-white text-black">{{ $category['name'] }}</h2>
+                <h2 class="text-xl font-bold text-black dark:text-white">{{ $category['name'] }}</h2>
                 <a href="{{ route('category.products', ['categoryName' => Str::slug($category['name'])]) }}" wire:navigate class="text-sm font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300">
                     Lainnya <i class="fas fa-arrow-right ml-1"></i>
                 </a>
