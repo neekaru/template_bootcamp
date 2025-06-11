@@ -1,6 +1,11 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
+
+// Node ES modules do not provide __dirname by default. Derive it from
+// the current file URL so path resolution works correctly when this
+// script runs under "type": "module".
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function collectModuleAssetsPaths(paths, modulesPath) {
   modulesPath = path.join(__dirname, modulesPath);
