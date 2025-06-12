@@ -3,7 +3,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-4xl mx-auto bg-base-100 rounded-lg shadow-lg p-6 sm:p-8">
+
+            {{-- Breadcrumbs --}}
             {{-- Header --}}
             <div class="bg-white shadow-md rounded-lg px-6 py-4 mb-6">
                 <h1 class="text-xl font-bold text-gray-800">Dashboard Pembeli</h1>

@@ -15,135 +15,107 @@ if (import.meta.env && import.meta.env.DEV) {
 }
 
 /* ---------- helpers (unchanged) ---------- */
-const getClass = el =>
-  typeof el.className === 'string'
-    ? el.className
-    : (el.className && el.className.baseVal) || '';
+(() => {
+  /* ---------- constants ---------- */
+  const DARK_ATTR = 'data-theme';
+  const DARK_VAL  = 'dark';
+  const DARK_MARK = 'dark:';
 
-const setClass = (el, value) => {
-  if (typeof el.className === 'string') el.className = value;
-  else if (el.className && 'baseVal' in el.className) el.className.baseVal = value;
-  else el.setAttribute('class', value);
-};
+  /* ---------- tiny helpers ---------- */
+  const getCls = el => el.getAttribute('class') || '';
+  const setCls = (el, v) => el.setAttribute('class', v);
+  const isDark = () => document.documentElement.getAttribute(DARK_ATTR) === DARK_VAL;
+  const hasDark = el => getCls(el).includes(DARK_MARK);
 
-const isDarkTheme = () =>
-  document.documentElement.getAttribute('data-theme') === 'dark';
+  /* ---------- prefix helper ---------- */
+  const prefixFor = t => {
+    if (t.startsWith('bg-gradient-to-')) return 'bg-gradient-to-'; // gradients
+    if (t.startsWith('bg-') && t.includes('/')) return 'bg-';      // bg‑colour/opacity
+    const i = t.indexOf('-');
+    return i === -1 ? t : t.slice(0, i + 1);
+  };
 
-const hasDark = el => getClass(el).includes('dark:');
+  /* ---------- one‑time snapshot builder ---------- */
+  const bakeSnapshots = el => {
+    if (el.dataset.darkClasses) return;               // already processed
 
-/* ---------- restore helper ---------- */
-const restoreLight = el => {
-  const snap = el.dataset.lightClasses;
-  if (!snap) return;
-  setClass(el, snap);
-  delete el.dataset.lightClasses;
-};
+    const light = getCls(el);
+    if (!light.includes(DARK_MARK)) return;           // nothing to do
 
-/* ---------- core swapper (always derived from stored light snapshot) ---------- */
-const processDarkClasses = el => {
-  if (!isDarkTheme()) return;                    // do nothing in light mode
+    const tokens = light.trim().split(/\s+/);
+    const wantKill = Object.create(null);
+    const toAdd = [];
 
-  /* 1. get the light snapshot (or take one) */
-  const lightSnapshot =
-    el.dataset.lightClasses || (el.dataset.lightClasses = getClass(el));
-
-  if (lightSnapshot.indexOf('dark:') === -1) return; // no dark: token → nothing
-
-  const tokens = lightSnapshot.trim().split(/\s+/);  // one allocation
-  const wantKill = Object.create(null);              // prefix → false|idx
-  const toAdd    = [];                               // stripped dark classes
-
-  /* pass 1 – collect dark info */
-  for (const t of tokens) {
-    if (!t.startsWith('dark:')) continue;
-    const base = t.slice(5);
-    if (!base) continue;
-
-    toAdd.push(base);
-    const dash = base.indexOf('-');
-    if (dash !== -1) wantKill[base.slice(0, dash + 1)] = false;
-  }
-  if (!Object.keys(wantKill).length) return;
-
-  /* pass 2 – right→left pick ONE light token per prefix */
-  const killIdx = new Set();
-  for (let i = tokens.length - 1; i >= 0; i--) {
-    const t = tokens[i];
-    if (t.startsWith('dark:') || t.includes(':')) continue;
-    const dash = t.indexOf('-');
-    if (dash === -1) continue;
-
-    const p = t.slice(0, dash + 1);
-    if (p in wantKill && wantKill[p] === false) {
-      killIdx.add(i);
-      wantKill[p] = true;
-      if (Object.values(wantKill).every(Boolean)) break;
+    // pass 1 – gather dark info
+    for (const t of tokens) {
+      if (!t.startsWith(DARK_MARK)) continue;
+      const base = t.slice(DARK_MARK.length);
+      if (!base) continue;
+      toAdd.push(base);
+      wantKill[prefixFor(base)] = false;
     }
-  }
+    if (!Object.keys(wantKill).length) return;
 
-  /* build dark class list */
-  const final = [];
-  for (let i = 0; i < tokens.length; i++) {
-    const tok = tokens[i];
-    if (tok.startsWith('dark:') || killIdx.has(i)) continue;
-    final.push(tok);
-  }
-  for (const d of toAdd) if (!final.includes(d)) final.push(d);
-
-  setClass(el, final.join(' '));
-};
-
-/* ---------- micro-task batching (unchanged) ---------- */
-let pending = new Set(), scheduled = false;
-const schedule = () => {
-  if (scheduled || !isDarkTheme()) return;
-  scheduled = true;
-  queueMicrotask(() => {
-    pending.forEach(processDarkClasses);
-    pending.clear();
-    scheduled = false;
-  });
-};
-
-/* ---------- body observer (unchanged) ---------- */
-const bodyObs = new MutationObserver(muts => {
-  if (!isDarkTheme()) return;
-  for (const m of muts) {
-    if (m.type === 'attributes') {
-      if (hasDark(m.target)) pending.add(m.target);
-    } else {
-      m.addedNodes.forEach(node => {
-        if (node.nodeType !== 1) return;
-        if (hasDark(node)) pending.add(node);
-        node.querySelectorAll('[class*="dark:"]').forEach(el => pending.add(el));
-      });
+    // pass 2 – choose ONE light token per prefix (right→left)
+    const killIdx = new Set();
+    for (let i = tokens.length - 1; i >= 0; i--) {
+      const t = tokens[i];
+      if (t.startsWith(DARK_MARK) || t.includes(':')) continue;
+      const p = prefixFor(t);
+      if (p in wantKill && wantKill[p] === false) {
+        killIdx.add(i);
+        wantKill[p] = true;
+        if (Object.values(wantKill).every(Boolean)) break;
+      }
     }
-  }
-  if (pending.size) schedule();
-});
 
-const startBodyObs = () => bodyObs.observe(document.body, {
-  subtree: true, childList: true,
-  attributes: true, attributeFilter: ['class']
-});
-const stopBodyObs = () => bodyObs.disconnect();
+    // build dark snapshot
+    const final = [];
+    for (let i = 0; i < tokens.length; i++) {
+      if (killIdx.has(i) || tokens[i].startsWith(DARK_MARK)) continue;
+      final.push(tokens[i]);
+    }
+    for (const d of toAdd) if (!final.includes(d)) final.push(d);
 
-/* ---------- theme observer ---------- */
-new MutationObserver(() => {
-  /* use a micro-task to see the *settled* theme value after rapid flips */
-  queueMicrotask(() => {
-    if (isDarkTheme()) {
-      document.querySelectorAll('[class*="dark:"]').forEach(processDarkClasses);
-      startBodyObs();
-    } else {
-      stopBodyObs();
-      document.querySelectorAll('[data-light-classes]').forEach(restoreLight);
+    el.dataset.lightClasses = light;
+    el.dataset.darkClasses  = final.join(' ');
+  };
+
+  /* ---------- theme applicator ---------- */
+  const applyCurrentTheme = el => {
+    if (isDark()) {
+      if (el.dataset.darkClasses) setCls(el, el.dataset.darkClasses);
+    } else if (el.dataset.lightClasses) {
+      setCls(el, el.dataset.lightClasses);
+    }
+  };
+
+  /* ---------- global DOM observer ---------- */
+  const bodyObs = new MutationObserver(muts => {
+    for (const m of muts) {
+      if (m.type === 'attributes') {
+        if (hasDark(m.target)) { bakeSnapshots(m.target); applyCurrentTheme(m.target); }
+      } else {
+        m.addedNodes.forEach(node => {
+          if (node.nodeType !== 1) return;
+          if (hasDark(node)) { bakeSnapshots(node); applyCurrentTheme(node); }
+          node.querySelectorAll('[class*="dark:"]').forEach(el => { bakeSnapshots(el); applyCurrentTheme(el); });
+        });
+      }
     }
   });
-}).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-/* ---------- bootstrap ---------- */
-if (isDarkTheme()) {
-  document.querySelectorAll('[class*="dark:"]').forEach(processDarkClasses);
-  startBodyObs();
-}
+  /* ---------- root theme‑flip observer ---------- */
+  new MutationObserver(() => {
+    // wait a frame to debounce rapid flips
+    requestAnimationFrame(() => {
+      document.querySelectorAll('[data-dark-classes],[data-light-classes]')
+              .forEach(applyCurrentTheme);
+    });
+  }).observe(document.documentElement, { attributes: true, attributeFilter: [DARK_ATTR] });
+
+  /* ---------- bootstrap ---------- */
+  document.querySelectorAll('[class*="dark:"]').forEach(el => bakeSnapshots(el));
+  bodyObs.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+  document.querySelectorAll('[data-dark-classes],[data-light-classes]').forEach(applyCurrentTheme);
+})();

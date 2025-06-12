@@ -54,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
 Route::prefix('produk')->group(function () {
     // Product Detail Page (Demo)
     Route::get('/{productId}', \App\Livewire\ProductDetail\Index::class)->name('product.detail');
-    Route::get('/{slug}', \App\Livewire\Web\Produk\Show::class)->name('web.produk.show');
+    Route::get('/{slug}', \App\Livewire\ProductDetail\Show::class)->name('web.produk.show');
     Route::get('/review/{productId}/{transactionId?}', \App\Livewire\ProductDetail\ProductReview::class)->name('produk.review')->middleware('auth:pembeli');
 });
 

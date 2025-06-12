@@ -266,7 +266,7 @@
     <!-- Fixed Text Section -->
     <div class="absolute top-0 left-0 w-full sm:w-1/2 h-full p-4 sm:p-8 flex-col justify-center z-2 hidden sm:flex bg-gradient-to-r backdrop-blur-sm">
         <h2 class="text-2xl sm:text-4xl font-bold text-gray-800 dark:text-light">{{ $fixed_title }}</h2>
-        <h3 class="text-2xl sm:text-4xl font-bold text-gray-800 dark:text-light mb-2 sm:mb-4">{{ $fixed_subtitle }}</h3>
+        <h3 class="text-2xl sm:text-4xl font-bold text-gray-800 mb-2 sm:mb-4 dark:text-light">{{ $fixed_subtitle }}</h3>
         <div class="w-24 h-1 bg-orange-500 mb-4"></div>
         <p class="text-xs sm:text-sm text-gray-600 dark:text-light">{{ $fixed_description }}</p>
     </div>
@@ -279,7 +279,7 @@
         
         <template x-for="(section, idx) in slidesToDisplay" :key="section._cloneId || idx">
             <div class="w-full h-full flex-shrink-0 relative carousel-slide flex items-center justify-end">
-                <div class="w-full sm:w-1/2 h-full flex flex-col items-center justify-center p-4 relative overflow-hidden carousel-content bg-white/60 dark:bg-gray-800/80">
+                <div class="w-full sm:w-1/2 h-full flex flex-col items-center justify-center p-4 relative overflow-hidden carousel-content bg-white/60">
                     <!-- Image -->
                     <div class="w-full h-3/4 flex items-center justify-center">
                         <img x-ref="productImage"
@@ -290,7 +290,7 @@
                     <!-- Category Title -->
                     <div class="w-full h-1/4 flex items-center justify-center text-center">
                         <h3 x-ref="categoryText"
-                            class="text-xl sm:text-2xl font-semibold text-gray-700 will-change-transform"
+                            class="text-xl sm:text-2xl font-semibold text-gray-700 will-change-transform dark:text-light text-slide-up image-fade-in transition-all duration-500"
                             x-text="currentSection?.category_title || ''"></h3>
                     </div>
                 </div>

@@ -47,9 +47,14 @@
                         </button>
 
                         @if(!$isAuthenticated)
-                            <a wire:navigate href="{{ route('login') }}" class="px-5 py-2 text-sm bg-gradient-to-r from-[#E5A04B] to-[#BD6711] hover:from-[#D0903F] hover:to-[#A95C0F] text-white font-semibold rounded-md shadow-sm transition duration-150 ease-in-out border border-white/20">
+                            <button
+                                wire:navigate
+                                onclick="window.location='{{ route('login') }}'"
+                                class="px-5 py-2 text-sm bg-gradient-to-r from-custom-gradient-from to-custom-gradient-to hover:from-custom-gradient-hover-from hover:to-custom-gradient-hover-to text-white font-semibold rounded-md shadow-sm transition duration-150 ease-in-out border border-white/20"
+                                type="button"
+                            >
                                 Log In
-                            </a>
+                            </button>
                         @else
                             <div class="dropdown dropdown-end">
                                 <label tabindex="0" class="btn btn-ghost flex items-center text-white hover:text-amber-200 px-2 py-1">

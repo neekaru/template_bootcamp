@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Web\Produk;
+namespace App\Livewire\ProductDetail;
 
 use App\Models\Produk;
 use Livewire\Component;
@@ -35,6 +35,12 @@ class Show extends Component
             ->where('slug', $this->slug)
             ->firstOrFail();
 
-        return view('livewire.web.produk.show', compact('produk'));
+        $breadcrumbs = [
+            ['label' => 'Home', 'url' => '/'],
+            ['label' => $product->category->name, 'url' => route('category.products', $product->category->name)],
+            ['label' => $product->name, 'url' => '#'] // Current page, no URL or URL is current page
+        ];
+
+        return view('livewire.product-detail.show', compact('product', 'breadcrumbs'));
     }
 }

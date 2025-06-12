@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Web\Cart;
+namespace App\Livewire\Cart;
 
 use App\Models\Cart;
 use Livewire\Component;
@@ -67,6 +67,6 @@ class BtnAddToCart extends Component
      */
     public function render()
     {
-        return view('livewire.web.cart.btn-add-to-cart');
+        return view('livewire.cart.btn-add-to-cart');
     }
 }
