@@ -3,12 +3,16 @@
     <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden md:flex">
         <div class="md:w-1/2 p-5">
             <div class="border border-gray-300 rounded-lg p-2 mb-3">
-                <img src="{{ isset($product->foto[0]) ? asset('storage/' . $product->foto[0]) : 'https://via.placeholder.com/400x300.png?text=Product+Image' }}" alt="{{ $product->nama_produk }}" class="w-full h-auto rounded-md">
+                <a href="{{ isset($product->foto[0]) ? asset('storage/' . $product->foto[0]) : 'https://via.placeholder.com/400x300.png?text=Product+Image' }}" class="glightbox" data-gallery="product-images">
+                    <img src="{{ isset($product->foto[0]) ? asset('storage/' . $product->foto[0]) : 'https://via.placeholder.com/400x300.png?text=Product+Image' }}" alt="{{ $product->nama_produk }}" class="w-full h-auto rounded-md">
+                </a>
             </div>
             <div class="flex space-x-2">
                 @foreach(array_slice($product->foto ?? [], 0, 3) as $i => $thumb)
                     <div class="w-1/3 border border-gray-300 rounded-lg p-1">
-                        <img src="{{ asset('storage/' . $thumb) }}" alt="Thumbnail {{ $i+1 }}" class="w-full h-auto rounded-md">
+                        <a href="{{ asset('storage/' . $thumb) }}" class="glightbox" data-gallery="product-images">
+                            <img src="{{ asset('storage/' . $thumb) }}" alt="Thumbnail {{ $i+1 }}" class="w-full h-auto rounded-md">
+                        </a>
                     </div>
                 @endforeach
             </div>
