@@ -14,108 +14,110 @@ if (import.meta.env && import.meta.env.DEV) {
     });
 }
 
-/* ---------- helpers (unchanged) ---------- */
 (() => {
-  /* ---------- constants ---------- */
+  /* ------------ constants & helpers ------------ */
   const DARK_ATTR = 'data-theme';
   const DARK_VAL  = 'dark';
   const DARK_MARK = 'dark:';
+  const isDark    = () =>
+    document.documentElement.getAttribute(DARK_ATTR) === DARK_VAL;
 
-  /* ---------- tiny helpers ---------- */
-  const getCls = el => el.getAttribute('class') || '';
-  const setCls = (el, v) => el.setAttribute('class', v);
-  const isDark = () => document.documentElement.getAttribute(DARK_ATTR) === DARK_VAL;
-  const hasDark = el => getCls(el).includes(DARK_MARK);
+  // Cache <el> → [lightClass, darkClass]
+  const snapshots = new WeakMap();
 
-  /* ---------- prefix helper ---------- */
   const prefixFor = t => {
-    if (t.startsWith('bg-gradient-to-')) return 'bg-gradient-to-'; // gradients
-    if (t.startsWith('bg-') && t.includes('/')) return 'bg-';      // bg‑colour/opacity
+    if (t.startsWith('bg-gradient-to-')) return 'bg-gradient-to-';
+    if (t.startsWith('bg-') && t.includes('/')) return 'bg-';
     const i = t.indexOf('-');
     return i === -1 ? t : t.slice(0, i + 1);
   };
 
-  /* ---------- one‑time snapshot builder ---------- */
-  const bakeSnapshots = el => {
-    if (el.dataset.darkClasses) return;               // already processed
+  /* ------------ snapshot builder ------------ */
+  const snap = el => {
+    if (snapshots.has(el)) return;
 
-    const light = getCls(el);
-    if (!light.includes(DARK_MARK)) return;           // nothing to do
+    const light = el.className;
+    if (!light.includes(DARK_MARK)) return;
 
-    const tokens = light.trim().split(/\s+/);
-    const wantKill = Object.create(null);
-    const toAdd = [];
+    const toks     = light.trim().split(/\s+/);
+    const toAdd    = [];              // tokens to add in dark mode
+    const killByPx = Object.create(null); // prefix → should kill?
 
-    // pass 1 – gather dark info
-    for (const t of tokens) {
+    // pass 1 – record dark tokens & prefixes
+    for (const t of toks) {
       if (!t.startsWith(DARK_MARK)) continue;
       const base = t.slice(DARK_MARK.length);
       if (!base) continue;
       toAdd.push(base);
-      wantKill[prefixFor(base)] = false;
+      killByPx[prefixFor(base)] = false;
     }
-    if (!Object.keys(wantKill).length) return;
+    if (!Object.keys(killByPx).length) return;
 
-    // pass 2 – choose ONE light token per prefix (right→left)
+    // pass 2 – decide which *light* tokens to drop (right → left)
     const killIdx = new Set();
-    for (let i = tokens.length - 1; i >= 0; i--) {
-      const t = tokens[i];
+    for (let i = toks.length - 1; i >= 0; i--) {
+      const t = toks[i];
       if (t.startsWith(DARK_MARK) || t.includes(':')) continue;
       const p = prefixFor(t);
-      if (p in wantKill && wantKill[p] === false) {
+      if (p in killByPx && killByPx[p] === false) {
         killIdx.add(i);
-        wantKill[p] = true;
-        if (Object.values(wantKill).every(Boolean)) break;
+        killByPx[p] = true;
+        if (Object.values(killByPx).every(Boolean)) break;
       }
     }
 
     // build dark snapshot
-    const final = [];
-    for (let i = 0; i < tokens.length; i++) {
-      if (killIdx.has(i) || tokens[i].startsWith(DARK_MARK)) continue;
-      final.push(tokens[i]);
+    const dark = [];
+    for (let i = 0; i < toks.length; i++) {
+      if (killIdx.has(i) || toks[i].startsWith(DARK_MARK)) continue;
+      dark.push(toks[i]);
     }
-    for (const d of toAdd) if (!final.includes(d)) final.push(d);
+    for (const d of toAdd) if (!dark.includes(d)) dark.push(d);
 
-    el.dataset.lightClasses = light;
-    el.dataset.darkClasses  = final.join(' ');
+    snapshots.set(el, [light, dark.join(' ')]);
   };
 
-  /* ---------- theme applicator ---------- */
-  const applyCurrentTheme = el => {
-    if (isDark()) {
-      if (el.dataset.darkClasses) setCls(el, el.dataset.darkClasses);
-    } else if (el.dataset.lightClasses) {
-      setCls(el, el.dataset.lightClasses);
-    }
-  };
-
-  /* ---------- global DOM observer ---------- */
-  const bodyObs = new MutationObserver(muts => {
-    for (const m of muts) {
-      if (m.type === 'attributes') {
-        if (hasDark(m.target)) { bakeSnapshots(m.target); applyCurrentTheme(m.target); }
-      } else {
-        m.addedNodes.forEach(node => {
-          if (node.nodeType !== 1) return;
-          if (hasDark(node)) { bakeSnapshots(node); applyCurrentTheme(node); }
-          node.querySelectorAll('[class*="dark:"]').forEach(el => { bakeSnapshots(el); applyCurrentTheme(el); });
-        });
-      }
-    }
-  });
-
-  /* ---------- root theme‑flip observer ---------- */
-  new MutationObserver(() => {
-    // wait a frame to debounce rapid flips
-    requestAnimationFrame(() => {
-      document.querySelectorAll('[data-dark-classes],[data-light-classes]')
-              .forEach(applyCurrentTheme);
+  /* ------------ apply theme to all cached els ------------ */
+  const applyTheme = () => {
+    const darkOn = isDark();
+    snapshots.forEach(([light, dark], el) => {
+      el.className = darkOn ? dark : light;
     });
-  }).observe(document.documentElement, { attributes: true, attributeFilter: [DARK_ATTR] });
+  };
 
-  /* ---------- bootstrap ---------- */
-  document.querySelectorAll('[class*="dark:"]').forEach(el => bakeSnapshots(el));
-  bodyObs.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
-  document.querySelectorAll('[data-dark-classes],[data-light-classes]').forEach(applyCurrentTheme);
+  /* ------------ scan a subtree once ------------ */
+  const scan = root => {
+    root.querySelectorAll('[class*="dark:"]').forEach(el => {
+      snap(el);                         // build snapshot only once
+      const [light, dark] = snapshots.get(el) || [];
+      if (dark) el.className = isDark() ? dark : light;
+    });
+  };
+
+  /* ------------ observers ------------ */
+  // 1) watch only for *inserted* nodes that might contain dark: tokens
+  new MutationObserver(muts => {
+    let queued = false;
+    muts.forEach(m => {
+      m.addedNodes.forEach(n => {
+        if (n.nodeType === 1) {
+          if (n.className && n.className.includes(DARK_MARK)) snap(n);
+          scan(n);                       // deep scan once
+          queued = true;
+        }
+      });
+    });
+    if (queued) requestAnimationFrame(applyTheme);
+  }).observe(document.body, { subtree: true, childList: true });
+
+  // 2) watch the root for actual theme flips
+  new MutationObserver(() => requestAnimationFrame(applyTheme))
+    .observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: [DARK_ATTR]
+    });
+
+  /* ------------ bootstrap ------------ */
+  scan(document);        // initial page load
+  applyTheme();          // pick the right snapshot
 })();
