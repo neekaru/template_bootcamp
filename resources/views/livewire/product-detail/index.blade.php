@@ -1,4 +1,5 @@
 <div class="container mx-auto p-4 font-sans">
+    <x-breadcrumbs :crumbs="$breadcrumbs" />
     <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden md:flex">
         <div class="md:w-1/2 p-5">
             <div class="border border-gray-300 rounded-lg p-2 mb-3">

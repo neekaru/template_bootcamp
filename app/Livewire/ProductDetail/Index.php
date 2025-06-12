@@ -60,9 +60,17 @@ class Index extends Component
 
     public function render()
     {
+        $breadcrumbs = [
+            // Removed Home entry since the breadcrumb component automatically adds it
+            // Attempt to get category name. Adjust if your product model doesn't have a 'category' relationship or if the category doesn't have a 'name'
+            ['label' => $this->product->category->name ?? 'Category', 'url' => isset($this->product->category) ? route('category.products', $this->product->category->name) : '#'],
+            ['label' => $this->product->nama_produk, 'url' => '#'] // Current page
+        ];
+
         return view('livewire.product-detail.index', [
             'product' => $this->product,
             'quantity' => $this->quantity,
+            'breadcrumbs' => $breadcrumbs,
             // productId is already available via $this->productId for the review component if needed
         ]);
     }

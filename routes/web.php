@@ -13,7 +13,7 @@ use App\Livewire\Checkout\CheckoutResult;
 
 Route::get('/', function () {
     return view('layouts.main'); // This view will just extend the app layout
-});
+})->name('home');
 
 // Authentication Routes (Livewire-based for Pembeli)
 Route::get('login', Login::class)->name('login')->middleware('guest:pembeli');
