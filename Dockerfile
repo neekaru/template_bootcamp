@@ -16,7 +16,6 @@ RUN docker-php-ext-install \
  intl \
  zip \
  opcache \
- imagick
 
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
@@ -31,8 +30,7 @@ RUN install-php-extensions \
  gd \
  intl \
  zip \
- opcache \
- imagick
+ opcache
 
 
 # copy application source
