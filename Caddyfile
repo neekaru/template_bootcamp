@@ -1,8 +1,6 @@
 {
     skip_install_trust
-    frankenphp {
-        document_root public/
-    }
+    frankenphp
 }
 
 :80 {
