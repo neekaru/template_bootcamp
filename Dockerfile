@@ -15,7 +15,7 @@ RUN docker-php-ext-install \
  gd \
  intl \
  zip \
- opcache \
+ opcache
 
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
