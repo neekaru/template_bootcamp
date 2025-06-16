@@ -11,9 +11,9 @@ use App\Http\Controllers\MidtransController;
 use App\Livewire\CheckoutPage;
 use App\Livewire\Checkout\CheckoutResult;
 
-Route::get('/', function () {
-    return view('layouts.main'); // This view will just extend the app layout
-})->name('home');
+Route::get("/", function () {
+    return view("layouts.main"); // This view will just extend the app layout
+})->name("home");
 
 // Authentication Routes (Livewire-based for Pembeli)
 Route::get('login', Login::class)->name('login')->middleware('guest:pembeli');
@@ -51,11 +51,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 //route product show
-Route::prefix('produk')->group(function () {
+Route::prefix("produk")->group(function () {
     // Product Detail Page (Demo)
-    Route::get('/{productId}', \App\Livewire\ProductDetail\Index::class)->name('product.detail');
-    Route::get('/{slug}', \App\Livewire\ProductDetail\Show::class)->name('web.produk.show');
-    Route::get('/review/{productId}/{transactionId?}', \App\Livewire\ProductDetail\ProductReview::class)->name('produk.review')->middleware('auth:pembeli');
+    Route::get("/detail/{productId}", \App\Livewire\ProductDetail\Index::class)->name("product.detail");
+    Route::get("/review/{productId}/{transactionId?}", \App\Livewire\ProductDetail\ProductReview::class)->name("produk.review")->middleware("auth:pembeli");
+    Route::get("/{slug}", \App\Livewire\ProductDetail\Show::class)->name("web.produk.show");
 });
 
 // About Us page

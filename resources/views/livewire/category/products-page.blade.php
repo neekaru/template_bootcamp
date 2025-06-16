@@ -34,7 +34,7 @@
                 @foreach($paginatedProducts as $product)
                     <div class="card bg-base-100 shadow-xl rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
                         <figure class="h-48 sm:h-56 flex items-center justify-center p-4 bg-white">
-                            <a href="/produk/{{ $product->id }}">
+                            <a href="/produk/detail/{{ $product->id }}">
                                 <img src="{{ $product->image_url ?? 'https://via.placeholder.com/300x300.png?text=Produk+Kerajinan' }}" alt="{{ $product->nama_produk }}" class="max-h-full max-w-full object-contain" />
                             </a>
                         </figure>

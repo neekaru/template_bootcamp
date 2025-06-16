@@ -130,7 +130,7 @@
                 @endforeach
             </div>
         @else
-            <p class="text-gray-500">Belum ada ulasan untuk produk ini.</p>
+            <p class="text-gray-500 mt-4">Belum ada ulasan untuk produk ini.</p>
         @endif
     </div>
 </div>
