@@ -28,7 +28,7 @@ RUN apk add --no-cache \
         zip \
         opcache
 
-COPY composer.json composer.lock ./
+COPY composer.json composer.lock artisan ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Stage 3: production image using FrankenPHP
