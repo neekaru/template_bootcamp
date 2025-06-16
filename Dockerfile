@@ -25,7 +25,7 @@ FROM dunglas/frankenphp:1-php8.3
 WORKDIR /app
 
 # Install PHP extensions
-RUN install-php-extensions \
+RUN docker-php-ext-install \
  pdo_mysql \
  gd \
  intl \
