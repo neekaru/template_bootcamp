@@ -53,10 +53,15 @@ COPY . .
 # copy built assets and vendor from previous stages
 COPY --from=node /app/public/build ./public/build
 COPY --from=vendor /app/vendor ./vendor
+
+# Create cache directories and set permissions
+RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache
+
+# Run Laravel setup commands
 RUN php artisan package:discover --ansi
 RUN php artisan optimize
-
-RUN chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 80
 CMD ["frankenphp", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
