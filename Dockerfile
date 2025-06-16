@@ -28,8 +28,8 @@ RUN apk add --no-cache \
         zip \
         opcache
 
-COPY composer.json composer.lock artisan ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Stage 3: production image using FrankenPHP
 FROM dunglas/frankenphp:1-php8.3
@@ -53,6 +53,7 @@ COPY . .
 # copy built assets and vendor from previous stages
 COPY --from=node /app/public/build ./public/build
 COPY --from=vendor /app/vendor ./vendor
+RUN php artisan package:discover --ansi
 RUN php artisan optimize
 
 RUN chown -R www-data:www-data storage bootstrap/cache
