@@ -10,28 +10,49 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-
     public function up(): void
     {
         if (Schema::hasTable('transaction_details')) {
-
+            // First, ensure the new columns exist
             Schema::table('transaction_details', function (Blueprint $table) {
-                $table->integer('transaction_id')->nullable()->change();
+                if (!Schema::hasColumn('transaction_details', 'transaction_id')) {
+                    $table->unsignedBigInteger('transaction_id')->nullable()->after('id');
+                }
+                if (!Schema::hasColumn('transaction_details', 'produk_id')) {
+                    $table->unsignedBigInteger('produk_id')->nullable()->after('transaction_id');
+                }
             });
 
-            // Cek apakah kolom 'transactions_id' ada sebelum update
-            if (Schema::hasColumn('transaction_details', 'transactions_id')) {
+            // Now migrate data from old columns to new columns
+            if (Schema::hasColumn('transaction_details', 'transactions_id') && Schema::hasColumn('transaction_details', 'transaction_id')) {
                 DB::statement('UPDATE transaction_details SET transaction_id = transactions_id WHERE transaction_id IS NULL AND transactions_id IS NOT NULL');
             }
 
-            if (Schema::hasColumn('transaction_details', 'products_id')) {
+            if (Schema::hasColumn('transaction_details', 'products_id') && Schema::hasColumn('transaction_details', 'produk_id')) {
                 DB::statement('UPDATE transaction_details SET produk_id = products_id WHERE produk_id IS NULL AND products_id IS NOT NULL');
             }
 
+            // Make the new columns non-nullable after data migration
             Schema::table('transaction_details', function (Blueprint $table) {
-                $table->integer('transaction_id')->nullable(false)->change();
+                if (Schema::hasColumn('transaction_details', 'transaction_id')) {
+                    $table->unsignedBigInteger('transaction_id')->nullable(false)->change();
+                }
+                if (Schema::hasColumn('transaction_details', 'produk_id')) {
+                    $table->unsignedBigInteger('produk_id')->nullable(false)->change();
+                }
             });
 
+            // Add foreign key constraints
+            Schema::table('transaction_details', function (Blueprint $table) {
+                if (Schema::hasColumn('transaction_details', 'transaction_id') && !$this->hasForeignKey('transaction_details', 'transaction_id')) {
+                    $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
+                }
+                if (Schema::hasColumn('transaction_details', 'produk_id') && !$this->hasForeignKey('transaction_details', 'produk_id')) {
+                    $table->foreign('produk_id')->references('id')->on('produks')->onDelete('cascade');
+                }
+            });
+
+            // Finally, drop the old columns
             Schema::table('transaction_details', function (Blueprint $table) {
                 if (Schema::hasColumn('transaction_details', 'transactions_id')) {
                     $table->dropForeign(['transactions_id']);
@@ -50,21 +71,68 @@ return new class extends Migration
         }
     }
 
-
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        // Add back the columns if needed
-        Schema::table('transaction_details', function (Blueprint $table) {
-            $table->unsignedBigInteger('transactions_id')->nullable();
-            $table->unsignedBigInteger('products_id')->nullable();
-            $table->integer('qty')->default(0);
-            
-            // Add foreign keys back
-            $table->foreign('transactions_id')->references('id')->on('transactions')->onDelete('cascade');
-            $table->foreign('products_id')->references('id')->on('produks')->onDelete('cascade');
-        });
+        if (Schema::hasTable('transaction_details')) {
+            // Add back the old columns
+            Schema::table('transaction_details', function (Blueprint $table) {
+                if (!Schema::hasColumn('transaction_details', 'transactions_id')) {
+                    $table->unsignedBigInteger('transactions_id')->nullable();
+                }
+                if (!Schema::hasColumn('transaction_details', 'products_id')) {
+                    $table->unsignedBigInteger('products_id')->nullable();
+                }
+                if (!Schema::hasColumn('transaction_details', 'qty')) {
+                    $table->integer('qty')->default(0);
+                }
+            });
+
+            // Migrate data back
+            if (Schema::hasColumn('transaction_details', 'transaction_id')) {
+                DB::statement('UPDATE transaction_details SET transactions_id = transaction_id WHERE transactions_id IS NULL AND transaction_id IS NOT NULL');
+            }
+            if (Schema::hasColumn('transaction_details', 'produk_id')) {
+                DB::statement('UPDATE transaction_details SET products_id = produk_id WHERE products_id IS NULL AND produk_id IS NOT NULL');
+            }
+
+            // Add foreign keys back to old columns
+            Schema::table('transaction_details', function (Blueprint $table) {
+                if (Schema::hasColumn('transaction_details', 'transactions_id')) {
+                    $table->foreign('transactions_id')->references('id')->on('transactions')->onDelete('cascade');
+                }
+                if (Schema::hasColumn('transaction_details', 'products_id')) {
+                    $table->foreign('products_id')->references('id')->on('produks')->onDelete('cascade');
+                }
+            });
+
+            // Drop the new columns
+            Schema::table('transaction_details', function (Blueprint $table) {
+                if (Schema::hasColumn('transaction_details', 'transaction_id')) {
+                    $table->dropForeign(['transaction_id']);
+                    $table->dropColumn('transaction_id');
+                }
+                if (Schema::hasColumn('transaction_details', 'produk_id')) {
+                    $table->dropForeign(['produk_id']);
+                    $table->dropColumn('produk_id');
+                }
+            });
+        }
+    }
+
+    /**
+     * Helper method to check if a foreign key exists
+     */
+    private function hasForeignKey($table, $column)
+    {
+        $foreignKeys = DB::select("PRAGMA foreign_key_list($table)");
+        foreach ($foreignKeys as $fk) {
+            if ($fk->from === $column) {
+                return true;
+            }
+        }
+        return false;
     }
 };
