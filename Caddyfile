@@ -7,6 +7,7 @@
     redir * http://{host}:9118{uri} permanent
 }
 
+
 :9118 {
     root * /app/public
     encode zstd br gzip
