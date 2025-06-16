@@ -8,8 +8,14 @@ COPY vite.config.js postcss.config.cjs tailwind.config.cjs ./
 RUN npm run build
 
 # Stage 2: install PHP dependencies
-FROM composer:2 AS vendor
+FROM composer:3 AS vendor
 WORKDIR /app
+RUN install-php-extensions \
+ pdo_mysql \
+ gd \
+ intl \
+ zip \
+ opcache
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
@@ -35,5 +41,5 @@ RUN php artisan optimize
 
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-EXPOSE 80 9118
+EXPOSE 80
 CMD ["frankenphp", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
