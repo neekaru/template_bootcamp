@@ -8,14 +8,16 @@ COPY vite.config.js postcss.config.cjs tailwind.config.cjs ./
 RUN npm run build
 
 # Stage 2: install PHP dependencies
-FROM composer:3 AS vendor
+FROM composer:2 AS vendor
 WORKDIR /app
-RUN install-php-extensions \
+RUN docker-php-ext-install \
  pdo_mysql \
  gd \
  intl \
  zip \
- opcache
+ opcache \
+ imagick
+
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
@@ -29,7 +31,8 @@ RUN install-php-extensions \
  gd \
  intl \
  zip \
- opcache
+ opcache \
+ imagick
 
 
 # copy application source
