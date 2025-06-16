@@ -12,4 +12,3 @@
     file_server
 }
 
-import Caddyfile.d/*.caddyfile

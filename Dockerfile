@@ -22,6 +22,7 @@ COPY . .
 # copy built assets and vendor from previous stages
 COPY --from=node /app/public/build ./public/build
 COPY --from=vendor /app/vendor ./vendor
+RUN php artisan optimize
 
 RUN chown -R www-data:www-data storage bootstrap/cache
 
