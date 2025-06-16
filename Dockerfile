@@ -17,6 +17,15 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 FROM dunglas/frankenphp:1-php8.3
 WORKDIR /app
 
+# Install PHP extensions
+RUN install-php-extensions \
+ pdo_mysql \
+ gd \
+ intl \
+ zip \
+ opcache
+
+
 # copy application source
 COPY . .
 # copy built assets and vendor from previous stages
@@ -26,5 +35,5 @@ RUN php artisan optimize
 
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-EXPOSE 80
+EXPOSE 80 9118
 CMD ["frankenphp", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
