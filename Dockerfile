@@ -10,12 +10,23 @@ RUN npm run build
 # Stage 2: install PHP dependencies
 FROM composer:2 AS vendor
 WORKDIR /app
-RUN docker-php-ext-install \
- pdo_mysql \
- gd \
- intl \
- zip \
- opcache
+RUN apk add --no-cache \
+    libzip-dev \
+    zlib-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    icu-dev \
+    oniguruma-dev \
+    && docker-php-ext-configure gd \
+        --with-freetype=/usr/include/ \
+        --with-jpeg=/usr/include/ \
+    && docker-php-ext-install \
+        pdo_mysql \
+        gd \
+        intl \
+        zip \
+        opcache
 
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
@@ -25,13 +36,17 @@ FROM dunglas/frankenphp:1-php8.3
 WORKDIR /app
 
 # Install PHP extensions
-RUN docker-php-ext-install \
- pdo_mysql \
- gd \
- intl \
- zip \
- opcache
-
+RUN apt-get update && apt-get install -y \
+    zlib1g-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libicu-dev \
+    libzip-dev \
+    unzip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql gd intl zip opcache \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # copy application source
 COPY . .
