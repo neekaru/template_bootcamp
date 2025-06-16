@@ -64,4 +64,4 @@ RUN php artisan package:discover --ansi
 RUN php artisan optimize
 
 EXPOSE 80
-CMD ["frankenphp", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+CMD ["frankenphp", "run", "--config", "/app/Caddyfile"]
