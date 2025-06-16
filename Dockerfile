@@ -63,5 +63,5 @@ RUN chmod -R 775 storage bootstrap/cache
 RUN php artisan package:discover --ansi
 RUN php artisan optimize
 
-EXPOSE 80
+EXPOSE 80 9118
 CMD ["frankenphp", "run", "--config", "/app/Caddyfile"]
