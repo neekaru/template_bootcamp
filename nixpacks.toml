@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["python311Packages.supervisor"]
+nixPkgs = ["...", "python311Packages.supervisor", "php82Packages.composer"]
 
 [phases.install]
 cmds = [
@@ -13,7 +13,8 @@ cmds = [
     "mkdir -p /etc/supervisor/conf.d/",
     "cp /assets/worker-*.conf /etc/supervisor/conf.d/",
     "cp /assets/supervisord.conf /etc/supervisord.conf",
-    "chmod +x /assets/start.sh"
+    "chmod +x /assets/start.sh",
+    "..."
 ]
 
 [start]
@@ -162,11 +163,11 @@ http {
         add_header X-Content-Type-Options "nosniff";
 
         client_max_body_size 35M;
-     
+
         index index.php;
-     
+
         charset utf-8;
-     
+
 
         $if(NIXPACKS_PHP_FALLBACK_PATH) (
             location / {
@@ -177,14 +178,14 @@ http {
                 try_files $uri $uri/ /index.php?$query_string;
            }
         )
-     
+
         location = /favicon.ico { access_log off; log_not_found off; }
         location = /robots.txt  { access_log off; log_not_found off; }
-     
+
         $if(IS_LARAVEL) (
             error_page 404 /index.php;
         ) else ()
-     
+
         location ~ \.php$ {
             fastcgi_pass 127.0.0.1:9000;
             fastcgi_buffer_size 8k;
@@ -192,11 +193,10 @@ http {
             include $!{nginx}/conf/fastcgi_params;
             include $!{nginx}/conf/fastcgi.conf;
         }
-     
+
         location ~ /\. (?!well-known).* {
             deny all;
         }
     }
 }
 '''
-
