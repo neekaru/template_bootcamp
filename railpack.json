@@ -5,8 +5,8 @@
     "build": {
       "commands": [
         "npm cache clean --force",
-        "rm -rf node_modules/.cache",
-        "npm ci --no-audit --no-fund",
+        "rm -rf node_modules/.cache || true",
+        "npm install --prefer-offline --no-audit --no-fund",
         "npm run build"
       ]
     }
