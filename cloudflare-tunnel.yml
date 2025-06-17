@@ -1,0 +1,64 @@
+# Cloudflare Tunnel configuration for Laravel Livewire application
+# Replace 'your-tunnel-name' with your actual tunnel name
+# Replace 'your-domain.com' with your actual domain
+
+tunnel: your-tunnel-name
+credentials-file: /etc/cloudflared/your-tunnel-name.json
+
+# Ingress rules
+ingress:
+  # Main application
+  - hostname: your-domain.com
+    service: http://nginx:80
+    originRequest:
+      httpHostHeader: your-domain.com
+      # Enable WebSocket support for Livewire
+      noTLSVerify: true
+      connectTimeout: 30s
+      tlsTimeout: 30s
+      tcpKeepAlive: 30s
+      keepAliveConnections: 10
+      keepAliveTimeout: 90s
+      
+  # WebSocket endpoint for Livewire (if using Laravel WebSockets)
+  - hostname: ws.your-domain.com
+    service: http://websockets:6001
+    originRequest:
+      httpHostHeader: ws.your-domain.com
+      noTLSVerify: true
+      # WebSocket specific settings
+      upgradeHeaders:
+        Upgrade: websocket
+        Connection: Upgrade
+      
+  # Development Vite server (optional, for development only)
+  - hostname: dev.your-domain.com
+    service: http://node:5173
+    originRequest:
+      httpHostHeader: dev.your-domain.com
+      noTLSVerify: true
+      
+  # Catch-all rule
+  - service: http_status:404
+
+# Global settings
+originRequest:
+  # Headers to pass through
+  connectTimeout: 30s
+  tlsTimeout: 30s
+  tcpKeepAlive: 30s
+  keepAliveConnections: 10
+  keepAliveTimeout: 90s
+  httpHostHeader: ""
+  originServerName: ""
+  caPool: ""
+  noTLSVerify: false
+  disableChunkedEncoding: false
+  bastionMode: false
+  proxyAddress: ""
+  proxyPort: 0
+  proxyType: ""
+  ipRules: []
+  
+# Metrics server (optional)
+metrics: localhost:8080
