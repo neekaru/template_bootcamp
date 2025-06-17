@@ -4,7 +4,9 @@
   "steps": {
     "build": {
       "commands": [
-        "npm ci",
+        "npm cache clean --force",
+        "rm -rf node_modules/.cache",
+        "npm ci --no-audit --no-fund",
         "npm run build"
       ]
     }
