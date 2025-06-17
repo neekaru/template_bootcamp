@@ -1,4 +1,4 @@
-# Docker Setup for Laravel with Livewire and Cloudflare Tunnel
+ wa# Docker Setup for Laravel with Livewire and Cloudflare Tunnel
 
 This Docker setup provides a complete development and production environment for a Laravel application with Livewire, including nginx, php-fpm, MySQL, Redis, and Node.js for frontend compilation.
 
