@@ -7,10 +7,7 @@
         "npm cache clean --force",
         "rm -rf node_modules/.cache || true",
         "npm install --prefer-offline --no-audit --no-fund",
-        "composer install --no-dev --optimize-autoloader",
-        "cp .env.example .env || true",
-        "php artisan key:generate --force",
-        "npm run build"
+        "npm run build -- --mode=production"
       ]
     }
   }
