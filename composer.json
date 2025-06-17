@@ -7,6 +7,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-zip": "*",
+        "ext-intl": "*",
+        "ext-gd": "*",
         "filament/filament": "*",
         "jantinnerezo/livewire-alert": "^4.0",
         "laravel/framework": "^12.0",

@@ -1,7 +1,4 @@
 
-[variables]
-PHP_EXTENSIONS = "zip,intl,gd"
-
 [phases.setup]
 nixPkgs = ["...", "python311Packages.supervisor", "php82Packages.composer", "nano", "less"]
 nixlibs = ["zlib", "libpng", "libjpeg", "freetype", "icu"]
