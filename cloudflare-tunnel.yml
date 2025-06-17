@@ -1,17 +1,16 @@
 # Cloudflare Tunnel configuration for Laravel Livewire application
-# Replace 'your-tunnel-name' with your actual tunnel name
-# Replace 'your-domain.com' with your actual domain
+# Replace 'kreasi-kita-tunnel' with your actual tunnel name
 
-tunnel: your-tunnel-name
-credentials-file: /etc/cloudflared/your-tunnel-name.json
+tunnel: kreasi-kita-tunnel
+credentials-file: /etc/cloudflared/kreasi-kita-tunnel.json
 
 # Ingress rules
 ingress:
   # Main application
-  - hostname: your-domain.com
-    service: http://nginx:80
+  - hostname: kreasi-kita.my.id
+    service: http://localhost:3000
     originRequest:
-      httpHostHeader: your-domain.com
+      httpHostHeader: kreasi-kita.my.id
       # Enable WebSocket support for Livewire
       noTLSVerify: true
       connectTimeout: 30s
@@ -21,21 +20,21 @@ ingress:
       keepAliveTimeout: 90s
       
   # WebSocket endpoint for Livewire (if using Laravel WebSockets)
-  - hostname: ws.your-domain.com
-    service: http://websockets:6001
+  - hostname: ws.kreasi-kita.my.id
+    service: http://localhost:6001
     originRequest:
-      httpHostHeader: ws.your-domain.com
+      httpHostHeader: ws.kreasi-kita.my.id
       noTLSVerify: true
       # WebSocket specific settings
       upgradeHeaders:
         Upgrade: websocket
         Connection: Upgrade
       
-  # Development Vite server (optional, for development only)
-  - hostname: dev.your-domain.com
-    service: http://node:5173
+  # API subdomain (optional)
+  - hostname: api.kreasi-kita.my.id
+    service: http://localhost:3000
     originRequest:
-      httpHostHeader: dev.your-domain.com
+      httpHostHeader: api.kreasi-kita.my.id
       noTLSVerify: true
       
   # Catch-all rule

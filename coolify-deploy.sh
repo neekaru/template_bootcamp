@@ -37,7 +37,7 @@ if [ ! -f .env ]; then
     echo "REDIS_PORT=\${REDIS_PORT}"
     echo ""
     echo "Application settings:"
-    echo "APP_URL=https://your-domain.com"
+    echo "APP_URL=https://kreasi-kita.my.id"
     echo "CACHE_DRIVER=redis"
     echo "SESSION_DRIVER=redis"
     echo "QUEUE_CONNECTION=redis"

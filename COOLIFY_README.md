@@ -40,7 +40,7 @@ This will:
 3. **Configure Build Settings**:
    - Build command: `./coolify-deploy.sh`
    - Start command: (leave empty, uses Dockerfile CMD)
-   - Port: `80`
+   - Port: `3000`
 
 ### 3. Configure External Services
 
@@ -61,7 +61,7 @@ Set these environment variables in Coolify dashboard:
 APP_NAME="Your Laravel App"
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://your-domain.com
+APP_URL=https://kreasi-kita.my.id
 
 # Database (from Coolify MySQL service)
 DB_CONNECTION=mysql
@@ -124,7 +124,7 @@ If using Livewire with real-time features:
    PUSHER_APP_ID=local
    PUSHER_APP_KEY=local
    PUSHER_APP_SECRET=local
-   PUSHER_HOST=your-domain.com
+   PUSHER_HOST=ws.kreasi-kita.my.id
    PUSHER_PORT=443
    PUSHER_SCHEME=https
    ```
@@ -145,25 +145,25 @@ chmod +x cloudflared
 
 ### 2. Create Tunnel
 ```bash
-cloudflared tunnel create your-tunnel-name
+cloudflared tunnel create kreasi-kita-tunnel
 ```
 
 ### 3. Configure DNS
 ```bash
-cloudflared tunnel route dns your-tunnel-name your-domain.com
+cloudflared tunnel route dns kreasi-kita-tunnel kreasi-kita.my.id
 ```
 
 ### 4. Update Tunnel Config
 Edit `cloudflare-tunnel.yml`:
 ```yaml
-tunnel: your-tunnel-name
-credentials-file: /path/to/your-tunnel-credentials.json
+tunnel: kreasi-kita-tunnel
+credentials-file: /path/to/kreasi-kita-tunnel.json
 
 ingress:
-  - hostname: your-domain.com
+  - hostname: kreasi-kita.my.id
     service: https://your-coolify-app-url
     originRequest:
-      httpHostHeader: your-domain.com
+      httpHostHeader: kreasi-kita.my.id
       noTLSVerify: true
   - service: http_status:404
 ```

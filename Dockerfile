@@ -71,12 +71,12 @@ RUN php artisan config:cache || true \
     && php artisan route:cache || true \
     && php artisan view:cache || true
 
-# Expose port
-EXPOSE 80
+# Expose port (using 3000 to avoid conflicts with Coolify common ports)
+EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost/health || exit 1
+    CMD curl -f http://localhost:3000/health || exit 1
 
 # Start supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
