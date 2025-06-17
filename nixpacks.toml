@@ -28,14 +28,15 @@ cmd = '/assets/start.sh'
 [staticAssets]
 "start.sh" = '''
 #!/bin/bash
+
 # Run migrations
 cp /app/.env.example /app/.env
 
+# Build assets for production
+php /app/artisan migrate --force
+
 # Generate the application key
 php /app/artisan key:generate
-
-# Run migrations
-php /app/artisan migrate --force
 
 # Transform the nginx configuration
 node /assets/scripts/prestart.mjs /assets/nginx.template.conf /etc/nginx.conf
@@ -117,11 +118,6 @@ pm.min_spare_servers = 4
 pm.max_spare_servers = 32
 pm.start_servers = 18
 clear_env = no
-php_admin_value[memory_limit] = 512M
-php_admin_value[max_execution_time] = 60
-php_admin_value[max_input_time] = 60
-php_admin_value[post_max_size] = 256M
-php_admin_value[upload_max_filesize] = 30M
 '''
 
 "nginx.template.conf" = '''
@@ -168,16 +164,17 @@ http {
      
         charset utf-8;
      
+        $if(IS_LARAVEL) (
+            location / {
+                try_files $uri $uri/ /index.php?$query_string;
+            }
+        ) else ()
         
         $if(NIXPACKS_PHP_FALLBACK_PATH) (
           location / {
             try_files $uri $uri/ ${NIXPACKS_PHP_FALLBACK_PATH}?$query_string;
           }
-        ) else (
-          location / {
-                try_files $uri $uri/ /index.php?$query_string;
-           }
-        )
+        ) else ()
      
         location = /favicon.ico { access_log off; log_not_found off; }
         location = /robots.txt  { access_log off; log_not_found off; }
@@ -188,7 +185,6 @@ http {
      
         location ~ \.php$ {
             fastcgi_pass 127.0.0.1:9000;
-            fastcgi_buffer_size 8k;
             fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
             include $!{nginx}/conf/fastcgi_params;
             include $!{nginx}/conf/fastcgi.conf;
