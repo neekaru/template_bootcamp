@@ -41,7 +41,7 @@ class CheckoutPage extends Component
         }
 
         $cartItems = Cart::with(['produk' => function($query) {
-            $query->select('id', 'nama_produk', 'harga', 'foto', 'deskripsi_produk', 'kategori_produk', 'berat');
+            $query->select('id', 'nama_produk', 'harga', 'foto', 'deskripsi_produk', 'kategori_produk');
         }])->where('pembeli_id', auth()->guard('pembeli')->id())->get();
         if ($cartItems->isEmpty()) {
             session()->flash('info', 'Keranjang Anda kosong. Silahkan tambahkan produk terlebih dahulu.');
@@ -108,7 +108,7 @@ class CheckoutPage extends Component
         }
 
         $cartItems = Cart::with(['produk' => function($query) {
-            $query->select('id', 'nama_produk', 'harga', 'foto', 'deskripsi_produk', 'kategori_produk', 'berat');
+            $query->select('id', 'nama_produk', 'harga', 'foto', 'deskripsi_produk', 'kategori_produk');
         }])->where('pembeli_id', auth()->guard('pembeli')->id())->get();
         if ($cartItems->isEmpty()) {
             session()->flash('error', 'Keranjang Anda kosong. Tidak dapat melanjutkan.');
@@ -154,8 +154,8 @@ class CheckoutPage extends Component
         $transaction = Transaction::create([
             'pembeli_id' => $pembeli->id,
             'invoice'    => 'INV-' . time() . Str::random(5),
-            'berat'      => $cartItems->sum(fn($item) => $item->qty * ($item->produk->berat ?? 100)),
-            'alamat'     => $this->inputAlamat, // Use the validated inputAlamat
+            'berat'      => $cartItems->sum(fn($item) => $item->qty * 100), // Use fixed weight of 100g per item
+            'alamat'     => $this->inputAlamat,
             'total'      => $total,
             'status'     => 'pending',
         ]);

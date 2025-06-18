@@ -122,7 +122,7 @@ class CartPage extends Component
         // Cache cart items to avoid repeated database queries
         if (!isset($this->cachedCartItems)) {
             $this->cachedCartItems = Cart::with(['produk' => function($query) {
-                $query->select('id', 'nama_produk', 'harga', 'foto', 'deskripsi_produk', 'kategori_produk', 'berat');
+                $query->select('id', 'nama_produk', 'harga', 'foto', 'deskripsi_produk', 'kategori_produk');
             }])->where('pembeli_id', auth()->guard('pembeli')->user()->id)
               ->get();
         }
