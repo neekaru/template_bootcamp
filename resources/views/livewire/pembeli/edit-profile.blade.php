@@ -41,7 +41,9 @@
                         <input type="file" id="avatarUpload" wire:model="newAvatar" class="hidden">
                     </div>
                     @error('newAvatar') <span class="text-red-500 text-sm mt-2">{{ $message }}</span> @enderror
-                    <div wire:loading wire:target="newAvatar" class="mt-2 text-sm text-gray-500">Uploading...</div>
+                    @if($newAvatar)
+                        <div wire:loading wire:target="newAvatar" class="mt-2 text-sm text-gray-500">Uploading...</div>
+                    @endif
                 </div>
 
                 <!-- Form Fields Section -->

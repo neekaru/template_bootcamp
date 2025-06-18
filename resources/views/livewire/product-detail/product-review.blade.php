@@ -101,12 +101,14 @@
                 @error('photos') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
                 @error('photos.*') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
             </div>            
-            <div wire:loading wire:target="photos" wire:dirty.class.remove="hidden" class="hidden text-sm text-gray-500 mb-4">
-                <span class="inline-flex items-center">
-                    <span class="loading loading-spinner loading-xs mr-2"></span>
-                    Mengunggah foto...
-                </span>
-            </div>            
+            @if(!empty($photos))
+                <div wire:loading wire:target="photos" class="text-sm text-gray-500 mb-4">
+                    <span class="inline-flex items-center">
+                        <span class="loading loading-spinner loading-xs mr-2"></span>
+                        Mengunggah foto...
+                    </span>
+                </div>
+            @endif
             <div class="flex justify-end space-x-3">
                 <button type="button" wire:click="cancel" class="btn btn-outline normal-case">Batal</button>                
                 <div class="relative inline-flex">
