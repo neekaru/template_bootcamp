@@ -59,7 +59,7 @@
                                 @forelse ($currentTransaction->transactionDetails as $item)
                                     <li class="flex py-6">
                                         <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
-                                            <img src="{{ is_array($item->product->foto) ? ($item->product->foto[0] ?? asset('images/default-product.png')) : ($item->product->foto ?? asset('images/default-product.png')) }}" 
+                                            <img src="{{ is_array($item->product->foto) ? (asset('storage/' . $item->product->foto[0]) ?? asset('images/default-product.png')) : (asset('storage/' . $item->product->foto) ?? asset('images/default-product.png')) }}" 
                                                 alt="{{ $item->product->nama_produk ?? 'Nama Produk' }}" 
                                                 class="h-full w-full object-cover object-center">
                                         </div>
