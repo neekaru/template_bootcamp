@@ -2,21 +2,25 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SuperAdminResource\Pages;
-use App\Models\SuperAdmin;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use App\Filament\Resources\SuperAdminResource\Pages;
 
 class SuperAdminResource extends Resource
 {
-    protected static ?string $model = SuperAdmin::class;
+    protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationLabel = 'Super Admins';
+    protected static ?string $navigationLabel = 'Super Admin';
+
+    protected static ?string $modelLabel = 'SuperAdmin';
+
+    protected static ?string $pluralModelLabel = 'SuperAdmins';
 
     protected static ?string $navigationGroup = 'User Management';
 
@@ -24,9 +28,13 @@ class SuperAdminResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Super Admin Details')
+                Forms\Components\Section::make('SuperAdmin Details')
                     ->schema([
-                        Forms\Components\TextInput::make('username')
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
@@ -36,12 +44,6 @@ class SuperAdminResource extends Resource
                             ->dehydrated(fn ($state) => filled($state))
                             ->maxLength(255)
                             ->label(fn ($record) => $record ? 'New Password' : 'Password'),
-                        Forms\Components\Select::make('role')
-                            ->options([
-                                'super_admin' => 'Super Admin',
-                            ])
-                            ->default('super_admin')
-                            ->required(),
                     ])
                     ->columns(2),
             ]);
@@ -53,15 +55,12 @@ class SuperAdminResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('username')
+                Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('role')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'super_admin' => 'primary',
-                        default => 'gray',
-                    }),
+                Tables\Columns\TextColumn::make('email')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
