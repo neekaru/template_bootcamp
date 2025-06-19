@@ -53,13 +53,9 @@ class CartsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('pembeli_id')->label('Pembeli')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('produk_id')->label('Produk')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('pembeli.username')->label('Pembeli')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('produk.nama_produk')->label('Produk')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('qty')->label('Quantity')->sortable(),
-                // Tables\Columns\TextColumn::make('total')
-                //   ->money('IDR', locale: 'id')
-                //   ->getStateUsing(fn($record) => $record->qty * $record->product->harga)
-                //   ->sortable(),
             ])
             ->filters([
                 //
