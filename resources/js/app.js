@@ -7,12 +7,6 @@ import "glightbox/dist/css/glightbox.css";
 // Make GLightbox available globally
 window.GLightbox = GLightbox;
 
-// Stagewise toolbar integration (development only)
-if (import.meta.env && import.meta.env.DEV) {
-    import("@stagewise/toolbar").then(({ initToolbar }) => {
-        initToolbar({ plugins: [] });
-    });
-}
 
 (() => {
     /* ------------ constants & helpers ------------ */
