@@ -32,13 +32,24 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./:/var/www/html
       - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/ssl-setup.sh:/usr/local/bin/ssl-setup.sh
+      - certbot_certs:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
     depends_on:
       - app
     networks:
       - kerajinantangan_network
+    environment:
+      - DOMAIN=${DOMAIN:-your-domain.com}
+      - EMAIL=${EMAIL:-your-email@example.com}
+
+volumes:
+  certbot_certs:
+  certbot_www:
 
 networks:
   kerajinantangan_network:

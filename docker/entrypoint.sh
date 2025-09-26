@@ -3,8 +3,8 @@
 # Set proper permissions for Laravel application
 echo "Setting up permissions..."
 
-# Change ownership to www user
-chown -R www:www /var/www/html
+# Change ownership to www user (skip vendor and node_modules to avoid permission issues)
+chown -R www:www /var/www/html --exclude=vendor --exclude=node_modules
 
 # Set general permissions
 chmod -R 755 /var/www/html
@@ -40,6 +40,11 @@ if [ ! -f /var/www/html/public/build/manifest.json ] || [ ! -d /var/www/html/pub
     echo "Building assets with npm..."
     npm run build
 fi
+
+# Publish Livewire assets
+echo "Publishing Livewire assets..."
+php artisan vendor:publish --tag=livewire:config --force
+php artisan livewire:publish --assets --force
 
 echo "Starting PHP-FPM..."
 exec php-fpm
